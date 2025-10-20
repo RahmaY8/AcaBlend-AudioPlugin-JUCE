@@ -23,10 +23,6 @@ public:
 	std::function<void()> onStopButton;
 	std::function<void(double)> onVolumeChanged;
 
-	//void prepareToPlay(int samplesPerBlockExpected, double sampleRate);
-	//void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill);
-	//void releaseResources();
-
 private:
 	PlayerAudio playerAudio;
 	//GUI elements
@@ -34,7 +30,6 @@ private:
 	juce::TextButton restartButton{ "Restart" };
 	juce::TextButton stopButton{ "Stop" };
 	juce::Slider volumeSlider;
-
 
 
 

@@ -16,10 +16,6 @@ PlayerGUI::PlayerGUI()
     addAndMakeVisible(volumeSlider);
 }
 
-    //setSize(500, 250);
-    //setAudioChannels(0, 2);
-
-
 PlayerGUI::~PlayerGUI() {}
 
     void PlayerGUI::paint(juce::Graphics & g)
