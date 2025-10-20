@@ -45,22 +45,11 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         onRestartButton();
     else if (button == &stopButton && onStopButton)
         onStopButton();
-    else if (button == &muteButton)
+    else if (button == &muteButton && onMuteToggle)
     {
         isMuted = !isMuted;
-        if (isMuted)
-        {
-            previousVolume = volumeSlider.getValue();
-            volumeSlider.setValue(0.0);
-        }
-        else
-        {
-            volumeSlider.setValue(previousVolume);
-        }
         muteButton.setButtonText(isMuted ? "Unmute" : "Mute");
-
-        if (onMuteToggle)
-            onMuteToggle(isMuted);
+        onMuteToggle(isMuted);
     }
 
 }

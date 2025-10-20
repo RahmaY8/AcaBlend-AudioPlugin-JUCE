@@ -12,7 +12,7 @@ public:
 
 	void paint(juce::Graphics& g) override;
 	void resized() override;
-	double getCurrentVolume() const { return volumeSlider.getValue(); }
+	void setVolumeSlider(double volume) { volumeSlider.setValue(volume); }
 
 	// Event handlers
 	void buttonClicked(juce::Button* button) override;

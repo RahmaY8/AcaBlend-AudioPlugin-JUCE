@@ -9,14 +9,9 @@ MainComponent::MainComponent()
     playerGUI.onRestartButton = [this] { playerAudio.start(); };
     playerGUI.onStopButton = [this] { playerAudio.stop(); playerAudio.setPosition(0.0); };
     playerGUI.onVolumeChanged = [this](double volume) { playerAudio.setGain((float)volume); };
-    playerGUI.onMuteToggle = [this](bool isMuted)
-        {
-            if (isMuted)
-                playerAudio.setGain(0.0f);
-            else
-                playerAudio.setGain((float)playerGUI.getCurrentVolume());
-        };
-
+    playerGUI.onMuteToggle = [this](bool isMuted) { playerAudio.mute(isMuted);
+    if (isMuted) playerGUI.setVolumeSlider(0.0);
+    else playerGUI.setVolumeSlider(0.5);};
 
     setSize(500, 250);
     setAudioChannels(0, 2);

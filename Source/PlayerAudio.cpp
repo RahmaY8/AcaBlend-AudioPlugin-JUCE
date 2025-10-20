@@ -2,13 +2,13 @@
 
 PlayerAudio::PlayerAudio() : transportSource()
 {
-	formatManager.registerBasicFormats();
+    formatManager.registerBasicFormats();
     transportSource.setSource(readerSource.get());
 }
 
 PlayerAudio::~PlayerAudio()
 {
-	releaseResources();
+    releaseResources();
 }
 
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
@@ -48,15 +48,30 @@ void PlayerAudio::setPosition(double pos)
     transportSource.setPosition(pos);
 }
 
+void PlayerAudio::mute(bool shouldMute)
+{
+    if (shouldMute)
+    {
+        previousGain = transportSource.getGain();
+        transportSource.setGain(0.0f);
+        muted = true;
+    }
+    else
+    {
+        transportSource.setGain(previousGain);
+        muted = false;
+    }
+}
 
 
-bool PlayerAudio::LoadFile(const juce::File& file) 
+
+bool PlayerAudio::LoadFile(const juce::File& file)
 {
     if (file.existsAsFile())
     {
         if (auto* reader = formatManager.createReaderFor(file))
         {
-            // 🔑 Disconnect old source first
+            // ?? Disconnect old source first
             transportSource.stop();
             transportSource.setSource(nullptr);
             readerSource.reset();
