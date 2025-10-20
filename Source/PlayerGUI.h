@@ -12,6 +12,7 @@ public:
 
 	void paint(juce::Graphics& g) override;
 	void resized() override;
+	double getCurrentVolume() const { return volumeSlider.getValue(); }
 
 	// Event handlers
 	void buttonClicked(juce::Button* button) override;
@@ -21,6 +22,7 @@ public:
 	std::function<void()> onLoadButton;
 	std::function<void()> onRestartButton;
 	std::function<void()> onStopButton;
+	std::function<void(bool)> onMuteToggle;
 	std::function<void(double)> onVolumeChanged;
 
 private:
@@ -29,10 +31,13 @@ private:
 	juce::TextButton loadButton{ "Load Files" };
 	juce::TextButton restartButton{ "Restart" };
 	juce::TextButton stopButton{ "Stop" };
+	juce::TextButton muteButton{ "Mute" };
+	bool isMuted = false;
+	double previousVolume = 0.5;
 	juce::Slider volumeSlider;
 
 
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerGUI);
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerGUI)
 
 };

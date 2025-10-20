@@ -9,6 +9,13 @@ MainComponent::MainComponent()
     playerGUI.onRestartButton = [this] { playerAudio.start(); };
     playerGUI.onStopButton = [this] { playerAudio.stop(); playerAudio.setPosition(0.0); };
     playerGUI.onVolumeChanged = [this](double volume) { playerAudio.setGain((float)volume); };
+    playerGUI.onMuteToggle = [this](bool isMuted)
+        {
+            if (isMuted)
+                playerAudio.setGain(0.0f);
+            else
+                playerAudio.setGain((float)playerGUI.getCurrentVolume());
+        };
 
 
     setSize(500, 250);
@@ -46,7 +53,7 @@ void MainComponent::loadAudioFile()
     fileChooser = std::make_unique<juce::FileChooser>(
         "Select an audio file...",
         juce::File{},
-        "*.wav;*.mp3");
+        ".wav;.mp3");
 
     fileChooser->launchAsync(
         juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
