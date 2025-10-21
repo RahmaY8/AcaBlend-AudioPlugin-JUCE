@@ -48,7 +48,7 @@ void PlayerAudio::setPosition(double pos)
     transportSource.setPosition(pos);
 }
 
-void PlayerAudio::mute(bool shouldMute)
+void PlayerAudio::mute(bool shouldMute)//Salma
 {
     if (shouldMute)
     {
@@ -60,6 +60,16 @@ void PlayerAudio::mute(bool shouldMute)
     {
         transportSource.setGain(previousGain);
         muted = false;
+    }
+}
+void PlayerAudio::Pause_Continue()//Rahma
+{
+    paused = !paused;
+    if (paused) {
+        transportSource.stop();
+    }
+    else {
+        transportSource.start();
     }
 }
 

@@ -15,12 +15,15 @@ public:
     void stop();
     void setGain(float gain);
     void setPosition(double pos);
-    void mute(bool shouldMute);
+    void mute(bool shouldMute);//Salma
+    void Pause_Continue();//Rahma
+    bool isPaused() const { return paused; }
 
     //double GetPositin() const;
     //double GetLength() const;
 
 private:
+    bool paused = false;//Rahma
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;

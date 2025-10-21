@@ -22,7 +22,9 @@ public:
 	std::function<void()> onLoadButton;
 	std::function<void()> onRestartButton;
 	std::function<void()> onStopButton;
-	std::function<void(bool)> onMuteToggle;
+	std::function<void(bool)> onMuteToggle; //Salma
+	std::function<void()> onPauseButton;	//Rahma
+	void updatePauseButtonText(bool isPaused);
 	std::function<void(double)> onVolumeChanged;
 
 private:
@@ -31,9 +33,10 @@ private:
 	juce::TextButton loadButton{ "Load Files" };
 	juce::TextButton restartButton{ "Restart" };
 	juce::TextButton stopButton{ "Stop" };
-	juce::TextButton muteButton{ "Mute" };
+	juce::TextButton muteButton{ "Mute" }; //Salma
 	bool isMuted = false;
 	double previousVolume = 0.5;
+	juce::TextButton PauseButton{ "Pause" }; //Rahma
 	juce::Slider volumeSlider;
 
 
