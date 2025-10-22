@@ -4,7 +4,8 @@
 PlayerGUI::PlayerGUI()
 {
     // Add buttons
-    for (auto* btn : { &loadButton, &restartButton , &stopButton , &muteButton , &PauseButton })
+    for (auto* btn : { &loadButton, &restartButton , &stopButton , &muteButton , &PauseButton
+                     , & ToStartButton , &ToEndButton })
     {
         btn->addListener(this);
         addAndMakeVisible(btn);
@@ -32,6 +33,8 @@ void PlayerGUI::resized()
     stopButton.setBounds(240, y, 80, 40);
     muteButton.setBounds(340, y, 80, 40);//Salma
     PauseButton.setBounds(40, 70, 80, 40);//Rahma
+    ToStartButton.setBounds(140, 70, 80, 40);
+    ToEndButton.setBounds(240, 70, 80, 40);
     /*prevButton.setBounds(340, y, 80, 40);
     nextButton.setBounds(440, y, 80, 40);*/
 
@@ -54,6 +57,10 @@ void PlayerGUI::buttonClicked(juce::Button* button)
     }
     else if (button == &PauseButton && onPauseButton)//Rahma
         onPauseButton();
+    else if (button == &ToStartButton && onTostartButton)
+        onTostartButton();
+    else if (button == &ToEndButton && onToEndButton)
+        onToEndButton();
 
 }
 void PlayerGUI::updatePauseButtonText(bool isPaused)//Rahma

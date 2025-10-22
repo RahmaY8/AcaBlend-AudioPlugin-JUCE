@@ -25,6 +25,8 @@ public:
 	std::function<void(bool)> onMuteToggle; //Salma
 	std::function<void()> onPauseButton;	//Rahma
 	void updatePauseButtonText(bool isPaused);
+	std::function<void()> onTostartButton;
+	std::function<void()> onToEndButton;
 	std::function<void(double)> onVolumeChanged;
 
 private:
@@ -37,6 +39,8 @@ private:
 	bool isMuted = false;
 	double previousVolume = 0.5;
 	juce::TextButton PauseButton{ "Pause" }; //Rahma
+	juce::TextButton ToStartButton{ " Go To Start" };
+	juce::TextButton ToEndButton{ "Go To End" };
 	juce::Slider volumeSlider;
 
 

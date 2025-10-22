@@ -72,6 +72,18 @@ void PlayerAudio::Pause_Continue()//Rahma
         transportSource.start();
     }
 }
+void PlayerAudio::ToStart()
+{
+    transportSource.setPosition(0.0);
+}
+
+void PlayerAudio::ToEnd()
+{
+    if (readerSource != nullptr) {
+        double wholeLength = transportSource.getLengthInSeconds();
+        transportSource.setPosition(wholeLength - 3.0);
+    }
+}
 
 
 

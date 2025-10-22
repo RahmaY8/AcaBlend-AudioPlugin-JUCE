@@ -18,6 +18,8 @@ public:
     void mute(bool shouldMute);//Salma
     void Pause_Continue();//Rahma
     bool isPaused() const { return paused; }
+    void ToStart();
+    void ToEnd();
 
     //double GetPositin() const;
     //double GetLength() const;

@@ -6,7 +6,7 @@ MainComponent::MainComponent()
 
     // Connect GUI callbacks
     playerGUI.onLoadButton = [this] { loadAudioFile(); };
-    playerGUI.onRestartButton = [this] { playerAudio.start(); };
+    playerGUI.onRestartButton = [this] { playerAudio.stop(); playerAudio.setPosition(0.0); playerAudio.start(); };
     playerGUI.onStopButton = [this] { playerAudio.stop(); playerAudio.setPosition(0.0); };
     playerGUI.onVolumeChanged = [this](double volume) { playerAudio.setGain((float)volume); };
     playerGUI.onMuteToggle = [this](bool isMuted) { playerAudio.mute(isMuted);//Salma
@@ -14,6 +14,8 @@ MainComponent::MainComponent()
     else playerGUI.setVolumeSlider(0.5);};
     playerGUI.onPauseButton = [this] {playerAudio.Pause_Continue(); //Rahma
         playerGUI.updatePauseButtonText(playerAudio.isPaused()); };
+    playerGUI.onTostartButton = [this] { playerAudio.ToStart(); };
+    playerGUI.onToEndButton = [this] { playerAudio.ToEnd(); };
 
     setSize(500, 250);
     setAudioChannels(0, 2);
