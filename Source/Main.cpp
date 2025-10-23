@@ -6,7 +6,7 @@ class SimpleAudioPlayer : public juce::JUCEApplication
 {
 public:
     const juce::String getApplicationName() override { return "Simple Audio Player"; }
-    const juce::String getApplicationVersion() override { return "1.0"; }
+    const juce::String getApplicationVersion() override { return "1.1"; }
 
     void initialise(const juce::String&) override
     {

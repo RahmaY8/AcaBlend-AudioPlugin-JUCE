@@ -16,7 +16,7 @@ MainComponent::MainComponent()
         playerGUI.updatePauseButtonText(playerAudio.isPaused()); };
     playerGUI.onTostartButton = [this] { playerAudio.ToStart(); };
     playerGUI.onToEndButton = [this] { playerAudio.ToEnd(); };
-
+    playerGUI.onLooping = [this] {playerAudio.Loop(); playerGUI.updateLoopButton(playerAudio.isLooped());}; //Kenzy
     setSize(500, 250);
     setAudioChannels(0, 2);
 }

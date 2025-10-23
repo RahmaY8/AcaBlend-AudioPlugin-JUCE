@@ -27,8 +27,10 @@ public:
 	void updatePauseButtonText(bool isPaused);
 	std::function<void()> onTostartButton;
 	std::function<void()> onToEndButton;
+	std::function<void()> onLooping; //Kenzy
+	void updateLoopButton(bool isLooping);
 	std::function<void(double)> onVolumeChanged;
-
+	
 private:
 	PlayerAudio playerAudio;
 	//GUI elements
@@ -41,6 +43,8 @@ private:
 	juce::TextButton PauseButton{ "Pause" }; //Rahma
 	juce::TextButton ToStartButton{ " Go To Start" };
 	juce::TextButton ToEndButton{ "Go To End" };
+	juce::TextButton LoopButton{ "Loop" }; //Kenzy
+	bool isLooping = false;
 	juce::Slider volumeSlider;
 
 

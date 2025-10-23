@@ -5,7 +5,7 @@ PlayerGUI::PlayerGUI()
 {
     // Add buttons
     for (auto* btn : { &loadButton, &restartButton , &stopButton , &muteButton , &PauseButton
-                     , & ToStartButton , &ToEndButton })
+                     , & ToStartButton , &ToEndButton ,&LoopButton})
     {
         btn->addListener(this);
         addAndMakeVisible(btn);
@@ -35,9 +35,9 @@ void PlayerGUI::resized()
     PauseButton.setBounds(40, 70, 80, 40);//Rahma
     ToStartButton.setBounds(140, 70, 80, 40);
     ToEndButton.setBounds(240, 70, 80, 40);
+    LoopButton.setBounds(340, 70, 80, 40);// Kenzy
     /*prevButton.setBounds(340, y, 80, 40);
     nextButton.setBounds(440, y, 80, 40);*/
-
     volumeSlider.setBounds(40, 120, getWidth() - 40, 30);
 }
 
@@ -61,11 +61,18 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         onTostartButton();
     else if (button == &ToEndButton && onToEndButton)
         onToEndButton();
+    else if (button == &LoopButton && onLooping) {
+        onLooping();
+    }
 
 }
 void PlayerGUI::updatePauseButtonText(bool isPaused)//Rahma
 {
     PauseButton.setButtonText(isPaused ? "Continue" : "Pause");
+}
+
+void PlayerGUI::updateLoopButton(bool isLooping) {
+    LoopButton.setButtonText(isLooping ? "Looping" : "Loop");
 }
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider)

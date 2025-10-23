@@ -18,7 +18,20 @@ void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 
 void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
+    if (readerSource == nullptr)
+    {
+        bufferToFill.clearActiveBufferRegion();
+        return;
+    }
+
     transportSource.getNextAudioBlock(bufferToFill);
+
+    
+    if (isLooping && transportSource.hasStreamFinished())
+    {
+        transportSource.setPosition(0.0);
+        transportSource.start();
+    }
 }
 
 void PlayerAudio::releaseResources()
@@ -85,6 +98,25 @@ void PlayerAudio::ToEnd()
     }
 }
 
+void PlayerAudio::Loop() //Kenzy
+{
+    isLooping = !isLooping;
+
+    if (readerSource != nullptr)
+    {
+        readerSource->setLooping(isLooping);
+
+        
+        transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
+
+        
+        if (isLooping && !transportSource.isPlaying())
+        {
+            transportSource.setPosition(0.0);
+            transportSource.start();
+        }
+    }
+}
 
 
 bool PlayerAudio::LoadFile(const juce::File& file)
@@ -93,20 +125,15 @@ bool PlayerAudio::LoadFile(const juce::File& file)
     {
         if (auto* reader = formatManager.createReaderFor(file))
         {
-            // ?? Disconnect old source first
             transportSource.stop();
             transportSource.setSource(nullptr);
             readerSource.reset();
 
-            // Create new reader source
+            currentSampleRate = reader->sampleRate; 
             readerSource = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
+            readerSource->setLooping(isLooping);
 
-            // Attach safely
-            transportSource.setSource(readerSource.get(),
-                0,
-                nullptr,
-                reader->sampleRate);
-            transportSource.start();
+            transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
             return true;
         }
     }

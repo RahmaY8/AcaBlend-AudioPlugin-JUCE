@@ -20,6 +20,11 @@ public:
     bool isPaused() const { return paused; }
     void ToStart();
     void ToEnd();
+    void Loop(); //Kenzy
+    bool isLooped() const { return isLooping; };
+
+    double getCurrentPosition() const { return transportSource.getCurrentPosition(); }
+    double getLengthInSeconds() const { return transportSource.getLengthInSeconds(); }
 
     //double GetPositin() const;
     //double GetLength() const;
@@ -31,6 +36,9 @@ private:
     juce::AudioTransportSource transportSource;
     bool muted = false;
     float previousGain = 0.5f;
+    bool isLooping = false;
+    double currentSampleRate = 44100.0; 
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerAudio)
 };
