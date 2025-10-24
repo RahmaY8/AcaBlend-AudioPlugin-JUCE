@@ -101,21 +101,8 @@ void PlayerAudio::ToEnd()
 void PlayerAudio::Loop() //Kenzy
 {
     isLooping = !isLooping;
+        transportSource.setLooping(isLooping);
 
-    if (readerSource != nullptr)
-    {
-        readerSource->setLooping(isLooping);
-
-        
-        transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
-
-        
-        if (isLooping && !transportSource.isPlaying())
-        {
-            transportSource.setPosition(0.0);
-            transportSource.start();
-        }
-    }
 }
 
 
