@@ -5,11 +5,25 @@ PlayerGUI::PlayerGUI()
 {
     // Add buttons
     for (auto* btn : { &loadButton, &restartButton , &stopButton , &muteButton , &PauseButton
-                     , & ToStartButton , &ToEndButton ,&LoopButton})
+                     , &ToStartButton , &ToEndButton ,&LoopButton })
     {
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
+
+    //Labels for metadata
+    addAndMakeVisible(nowPlayingLabel);
+    nowPlayingLabel.setText("Now Playing: ", juce::dontSendNotification);
+    addAndMakeVisible(titleLabel);
+    titleLabel.setText("Title: ", juce::dontSendNotification);
+    addAndMakeVisible(artistLabel);
+    artistLabel.setText("Artist: ", juce::dontSendNotification);
+    addAndMakeVisible(durationLabel);
+    durationLabel.setText("Duration: ", juce::dontSendNotification);
+    addAndMakeVisible(formatLabel);
+    formatLabel.setText("Format: ", juce::dontSendNotification);
+
+
     // Volume slider
     volumeSlider.setRange(0.0, 1.0, 0.01);
     volumeSlider.setValue(0.5);
@@ -39,6 +53,12 @@ void PlayerGUI::resized()
     /*prevButton.setBounds(340, y, 80, 40);
     nextButton.setBounds(440, y, 80, 40);*/
     volumeSlider.setBounds(40, 120, getWidth() - 40, 30);
+
+    nowPlayingLabel.setBounds(40, 200, 80, 40);
+    titleLabel.setBounds(40, 250, 80, 40);
+    artistLabel.setBounds(40, 300, 80, 40);
+    durationLabel.setBounds(40, 350, 80, 40);
+    formatLabel.setBounds(40, 400, 80, 40);
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button)
@@ -80,4 +100,12 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider)
     if (slider == &volumeSlider)
         // transportSource.setGain((float)slider->getValue());
         onVolumeChanged(slider->getValue());
+}
+void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& artist,
+    const juce::String& duration, const juce::String& format)
+{
+    titleLabel.setText("Title: " + title, juce::dontSendNotification);
+    artistLabel.setText("Artist: " + artist, juce::dontSendNotification);
+    durationLabel.setText("Duration: " + duration, juce::dontSendNotification);
+    formatLabel.setText("Format: " + format, juce::dontSendNotification);
 }

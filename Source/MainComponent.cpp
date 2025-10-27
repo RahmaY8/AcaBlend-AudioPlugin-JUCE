@@ -11,12 +11,17 @@ MainComponent::MainComponent()
     playerGUI.onVolumeChanged = [this](double volume) { playerAudio.setGain((float)volume); };
     playerGUI.onMuteToggle = [this](bool isMuted) { playerAudio.mute(isMuted);//Salma
     if (isMuted) playerGUI.setVolumeSlider(0.0);
-    else playerGUI.setVolumeSlider(0.5);};
+    else playerGUI.setVolumeSlider(0.5); };
     playerGUI.onPauseButton = [this] {playerAudio.Pause_Continue(); //Rahma
-        playerGUI.updatePauseButtonText(playerAudio.isPaused()); };
+    playerGUI.updatePauseButtonText(playerAudio.isPaused()); };
     playerGUI.onTostartButton = [this] { playerAudio.ToStart(); };
     playerGUI.onToEndButton = [this] { playerAudio.ToEnd(); };
-    playerGUI.onLooping = [this] {playerAudio.Loop(); playerGUI.updateLoopButton(playerAudio.isLooped());}; //Kenzy
+    playerGUI.onLooping = [this] {playerAudio.Loop(); playerGUI.updateLoopButton(playerAudio.isLooped()); }; //Kenzy
+    // This line in MainComponent constructor CONNECTS them:
+    playerAudio.MetadataLoaded = [this](const juce::String& title, const juce::String& artist,
+        const juce::String& duration, const juce::String& format) {
+            playerGUI.updateMetaData(title, artist, duration, format);
+        };
     setSize(500, 250);
     setAudioChannels(0, 2);
 }

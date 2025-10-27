@@ -98,7 +98,7 @@ void PlayerAudio::ToEnd()
     }
 }
 
-void PlayerAudio::Loop() //Kenzy
+void PlayerAudio::Loop() 
 {
     isLooping = !isLooping;
         transportSource.setLooping(isLooping);
@@ -106,23 +106,23 @@ void PlayerAudio::Loop() //Kenzy
 }
 
 
-bool PlayerAudio::LoadFile(const juce::File& file)
-{
-    if (file.existsAsFile())
+    bool PlayerAudio::LoadFile(const juce::File & file)
     {
-        if (auto* reader = formatManager.createReaderFor(file))
+        if (file.existsAsFile())
         {
-            transportSource.stop();
-            transportSource.setSource(nullptr);
-            readerSource.reset();
+            if (auto* reader = formatManager.createReaderFor(file))
+            {
+                transportSource.stop();
+                transportSource.setSource(nullptr);
+                readerSource.reset();
 
-            currentSampleRate = reader->sampleRate; 
-            readerSource = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
-            readerSource->setLooping(isLooping);
+                currentSampleRate = reader->sampleRate;
+                readerSource = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
+                readerSource->setLooping(isLooping);
 
-            transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
-            return true;
+                transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
+                return true;
+            }
         }
+        return false;
     }
-    return false;
-}

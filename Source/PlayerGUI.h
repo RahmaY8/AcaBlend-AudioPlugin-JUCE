@@ -18,6 +18,9 @@ public:
 	void buttonClicked(juce::Button* button) override;
 	void sliderValueChanged(juce::Slider* slider) override;
 
+	void updateMetaData(const juce::String& title, const juce::String& artist,
+		const juce::String& duration, const juce::String& format);
+
 	// Callbacks
 	std::function<void()> onLoadButton;
 	std::function<void()> onRestartButton;
@@ -30,7 +33,7 @@ public:
 	std::function<void()> onLooping; //Kenzy
 	void updateLoopButton(bool isLooping);
 	std::function<void(double)> onVolumeChanged;
-	
+
 private:
 	PlayerAudio playerAudio;
 	//GUI elements
@@ -41,11 +44,14 @@ private:
 	bool isMuted = false;
 	double previousVolume = 0.5;
 	juce::TextButton PauseButton{ "Pause" }; //Rahma
-	juce::TextButton ToStartButton{ " Go To Start" };
+	juce::TextButton ToStartButton{ "Go To Start" };
 	juce::TextButton ToEndButton{ "Go To End" };
 	juce::TextButton LoopButton{ "Loop" }; //Kenzy
 	bool isLooping = false;
 	juce::Slider volumeSlider;
+
+	juce::Label nowPlayingLabel;
+	juce::Label titleLabel, artistLabel, durationLabel, formatLabel;
 
 
 

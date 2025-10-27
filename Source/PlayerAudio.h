@@ -22,9 +22,12 @@ public:
     void ToEnd();
     void Loop(); //Kenzy
     bool isLooped() const { return isLooping; };
+    std::function<void(const juce::String& title, const juce::String& artist,
+        const juce::String& duration, const juce::String& format)> MetadataLoaded;
 
     double getCurrentPosition() const { return transportSource.getCurrentPosition(); }
     double getLengthInSeconds() const { return transportSource.getLengthInSeconds(); }
+
 
     //double GetPositin() const;
     //double GetLength() const;
@@ -37,7 +40,8 @@ private:
     bool muted = false;
     float previousGain = 0.5f;
     bool isLooping = false;
-    double currentSampleRate = 44100.0; 
+    double currentSampleRate = 44100.0;
+    juce::String formatTime(double sec);
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerAudio)
