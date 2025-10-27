@@ -26,7 +26,7 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
 
     transportSource.getNextAudioBlock(bufferToFill);
 
-    
+
     if (isLooping && transportSource.hasStreamFinished())
     {
         transportSource.setPosition(0.0);
@@ -98,31 +98,49 @@ void PlayerAudio::ToEnd()
     }
 }
 
-void PlayerAudio::Loop() 
+void PlayerAudio::Loop() //kenzy
 {
     isLooping = !isLooping;
-        transportSource.setLooping(isLooping);
+    transportSource.setLooping(isLooping);
 
 }
 
 
-    bool PlayerAudio::LoadFile(const juce::File & file)
+bool PlayerAudio::LoadFile(const juce::File& file)
+{
+    if (file.existsAsFile())
     {
-        if (file.existsAsFile())
+        if (auto* reader = formatManager.createReaderFor(file))
         {
-            if (auto* reader = formatManager.createReaderFor(file))
-            {
-                transportSource.stop();
-                transportSource.setSource(nullptr);
-                readerSource.reset();
+            transportSource.stop();
+            transportSource.setSource(nullptr);
+            readerSource.reset();
 
-                currentSampleRate = reader->sampleRate;
-                readerSource = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
-                readerSource->setLooping(isLooping);
+            currentSampleRate = reader->sampleRate;
+            readerSource = std::make_unique<juce::AudioFormatReaderSource>(reader, true);
+            readerSource->setLooping(isLooping);
 
-                transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
-                return true;
-            }
+            transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
+            //Extract MetaData
+
+            juce::String format = file.getFileExtension().toUpperCase();
+            juce::String title = reader->metadataValues.getValue("Title", file.getFileNameWithoutExtension());
+            juce::String artist = reader->metadataValues.getValue("Artist", "Unknown Artist");
+            double Duration = reader->lengthInSamples / reader->sampleRate;
+            juce::String duration = formatTime(Duration);
+
+            if (MetadataLoaded)
+                MetadataLoaded(title, artist, duration, format);
+
+            return true;
         }
-        return false;
     }
+    return false;
+}
+
+juce::String PlayerAudio::formatTime(double seconds)
+{
+    int minutes = (int)(seconds / 60);
+    int secs = (int)seconds % 60;
+    return juce::String::formatted("%02d:%02d", minutes, secs);
+}

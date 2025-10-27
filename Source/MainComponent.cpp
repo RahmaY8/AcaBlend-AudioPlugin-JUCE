@@ -17,7 +17,6 @@ MainComponent::MainComponent()
     playerGUI.onTostartButton = [this] { playerAudio.ToStart(); };
     playerGUI.onToEndButton = [this] { playerAudio.ToEnd(); };
     playerGUI.onLooping = [this] {playerAudio.Loop(); playerGUI.updateLoopButton(playerAudio.isLooped()); }; //Kenzy
-    // This line in MainComponent constructor CONNECTS them:
     playerAudio.MetadataLoaded = [this](const juce::String& title, const juce::String& artist,
         const juce::String& duration, const juce::String& format) {
             playerGUI.updateMetaData(title, artist, duration, format);
