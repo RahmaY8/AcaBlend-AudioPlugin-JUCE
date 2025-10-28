@@ -9,7 +9,7 @@ class PlayerGUI : public juce::Component,
 public:
 	PlayerGUI();
 	~PlayerGUI() override;
-
+	
 	void paint(juce::Graphics& g) override;
 	void resized() override;
 	void setVolumeSlider(double volume) { volumeSlider.setValue(volume); }
@@ -33,6 +33,7 @@ public:
 	std::function<void()> onLooping; //Kenzy
 	void updateLoopButton(bool isLooping);
 	std::function<void(double)> onVolumeChanged;
+	std::function<void(double)> onSpeedChanged; //Salma2
 
 private:
 	PlayerAudio playerAudio;
@@ -49,6 +50,7 @@ private:
 	juce::TextButton LoopButton{ "Loop" }; //Kenzy
 	bool isLooping = false;
 	juce::Slider volumeSlider;
+	juce::Slider speedSlider; //Salma2
 
 	juce::Label nowPlayingLabel;
 	juce::Label titleLabel, artistLabel, durationLabel, formatLabel;

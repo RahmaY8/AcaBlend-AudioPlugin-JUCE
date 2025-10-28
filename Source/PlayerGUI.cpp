@@ -29,6 +29,13 @@ PlayerGUI::PlayerGUI()
     volumeSlider.setValue(0.5);
     volumeSlider.addListener(this);
     addAndMakeVisible(volumeSlider);
+
+	// Speed slider //Salma2
+	speedSlider.setRange(0.5, 2.0, 0.1);
+	speedSlider.setValue(1.0);
+	speedSlider.addListener(this);
+	addAndMakeVisible(speedSlider);
+
 }
 
 PlayerGUI::~PlayerGUI() {}
@@ -53,6 +60,7 @@ void PlayerGUI::resized()
     /*prevButton.setBounds(340, y, 80, 40);
     nextButton.setBounds(440, y, 80, 40);*/
     volumeSlider.setBounds(40, 120, getWidth() - 40, 30);
+	speedSlider.setBounds(40, 170, getWidth() - 40, 30); //Salma2
 
     nowPlayingLabel.setBounds(40, 200, 80, 40);
     titleLabel.setBounds(40, 250, 80, 40);
@@ -100,6 +108,8 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider)
     if (slider == &volumeSlider)
         // transportSource.setGain((float)slider->getValue());
         onVolumeChanged(slider->getValue());
+	else if (slider == &speedSlider) //Salma2
+		onSpeedChanged(slider->getValue());
 }
 void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& artist,
     const juce::String& duration, const juce::String& format)

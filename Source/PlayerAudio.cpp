@@ -3,7 +3,9 @@
 PlayerAudio::PlayerAudio() : transportSource()
 {
     formatManager.registerBasicFormats();
-    transportSource.setSource(readerSource.get());
+	// wrap the transport source in a resampling source to allow speed changes //Salma2
+	resamplingSource = std::make_unique<juce::ResamplingAudioSource>(&transportSource, false,2);
+    /*transportSource.setSource(readerSource.get());*/ 
 }
 
 PlayerAudio::~PlayerAudio()
@@ -14,6 +16,16 @@ PlayerAudio::~PlayerAudio()
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
+	resamplingSource->prepareToPlay(samplesPerBlockExpected, sampleRate);//Salma2
+
+	// DSP for Pitch correction //Salma22
+	/*spec.sampleRate = sampleRate;
+	spec.maximumBlockSize = samplesPerBlockExpected;
+	spec.numChannels = 2;
+
+	pitchShifter.prepare(spec);
+	pitchShifter.setPitchSemitones(0.0f);*/
+
 }
 
 void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
@@ -24,7 +36,12 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
         return;
     }
 
-    transportSource.getNextAudioBlock(bufferToFill);
+	 resamplingSource->getNextAudioBlock(bufferToFill); //Salma2
+	/*transportSource.getNextAudioBlock(bufferToFill);*/ //Salma2
+	 // Pitch correction process //Salma22
+	/* juce::dsp::AudioBlock<float> block(*bufferToFill.buffer);
+	 juce::dsp::ProcessContextReplacing<float> context(block);
+	 pitchShifter.process(context);*/
 
 
     if (isLooping && transportSource.hasStreamFinished())
@@ -37,6 +54,7 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
 void PlayerAudio::releaseResources()
 {
     transportSource.releaseResources();
+	resamplingSource->releaseResources();//Salma2
 }
 
 
@@ -105,7 +123,13 @@ void PlayerAudio::Loop() //kenzy
 
 }
 
+void PlayerAudio::setspeed(float speed) //Salma2
+{
+	playbackSpeed = juce::jlimit(0.5f, 2.0f, speed);
+    resamplingSource->setResamplingRatio(playbackSpeed);
 
+	float semitones = 12.0f * std::log2(1.0f / playbackSpeed);
+}
 bool PlayerAudio::LoadFile(const juce::File& file)
 {
     if (file.existsAsFile())
@@ -121,6 +145,7 @@ bool PlayerAudio::LoadFile(const juce::File& file)
             readerSource->setLooping(isLooping);
 
             transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
+			resamplingSource->setResamplingRatio(playbackSpeed);//Salma2
             //Extract MetaData
 
             juce::String format = file.getFileExtension().toUpperCase();

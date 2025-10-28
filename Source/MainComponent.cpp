@@ -9,6 +9,7 @@ MainComponent::MainComponent()
     playerGUI.onRestartButton = [this] { playerAudio.stop(); playerAudio.setPosition(0.0); playerAudio.start(); };
     playerGUI.onStopButton = [this] { playerAudio.stop(); playerAudio.setPosition(0.0); };
     playerGUI.onVolumeChanged = [this](double volume) { playerAudio.setGain((float)volume); };
+	playerGUI.onSpeedChanged = [this](double speed) { playerAudio.setspeed((float)speed); };//Salma2
     playerGUI.onMuteToggle = [this](bool isMuted) { playerAudio.mute(isMuted);//Salma
     if (isMuted) playerGUI.setVolumeSlider(0.0);
     else playerGUI.setVolumeSlider(0.5); };
