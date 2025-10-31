@@ -3,15 +3,16 @@
 
 PlayerGUI::PlayerGUI()
 {
+    juce::Logger::writeToLog("PlayerGUI constructed: " + juce::String((intptr_t)this));
     // Add buttons
     for (auto* btn : { &loadButton, &restartButton , &stopButton , &muteButton , &PauseButton
-                     , &ToStartButton , &ToEndButton ,&LoopButton })
+              , &ToStartButton , &ToEndButton ,&LoopButton ,& setPointAButton,& setPointBButton,& clearLoopButton,& toggleABLoopButton })
     {
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
 
-    //Labels for metadata
+    //Labels for metadata // Rahma2
     addAndMakeVisible(nowPlayingLabel);
     nowPlayingLabel.setText("Now Playing: ", juce::dontSendNotification);
     addAndMakeVisible(titleLabel);
@@ -21,8 +22,15 @@ PlayerGUI::PlayerGUI()
     addAndMakeVisible(durationLabel);
     durationLabel.setText("Duration: ", juce::dontSendNotification);
     addAndMakeVisible(formatLabel);
-    formatLabel.setText("Format: ", juce::dontSendNotification);
 
+	//Labels for AB Loop //Kenzy3
+    formatLabel.setText("Format: ", juce::dontSendNotification);
+    loopPointALabel.setText("A: --:--", juce::dontSendNotification);
+    addAndMakeVisible(loopPointALabel);
+    loopPointBLabel.setText("B: --:--", juce::dontSendNotification);
+    addAndMakeVisible(loopPointBLabel);
+    abLoopStatusLabel.setText("AB Loop: Off", juce::dontSendNotification);
+    addAndMakeVisible(abLoopStatusLabel);
 
     // Volume slider
     volumeSlider.setRange(0.0, 1.0, 0.01);
@@ -36,9 +44,45 @@ PlayerGUI::PlayerGUI()
 	speedSlider.addListener(this);
 	addAndMakeVisible(speedSlider);
 
+    //Progress Slider  //Kenzy2
+    progressSlider.setRange(0.0, 1.0, 0.001);
+    progressSlider.setValue(0.0);
+    progressSlider.addListener(this);
+    progressSlider.setSliderStyle(juce::Slider::LinearBar);
+    progressSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    addAndMakeVisible(progressSlider);
+
+    progressLabel.setText("00:00", juce::dontSendNotification);
+    addAndMakeVisible(progressLabel);
+
+    startTimer(100);
 }
 
-PlayerGUI::~PlayerGUI() {}
+PlayerGUI::~PlayerGUI() {
+    juce::Logger::writeToLog("PlayerGUI destroyed: " + juce::String((intptr_t)this));
+
+    stopTimer();
+
+    onLoadButton = nullptr;
+    onRestartButton = nullptr;
+    onStopButton = nullptr;
+    onMuteToggle = nullptr;
+    onPauseButton = nullptr;
+    onTostartButton = nullptr;
+    onToEndButton = nullptr;
+    onLooping = nullptr;
+    onVolumeChanged = nullptr;
+    onSpeedChanged = nullptr;
+    onProgressChanged = nullptr;
+    onProgressUpdate = nullptr;
+
+    progressSlider.removeListener(this);
+    volumeSlider.removeListener(this);
+    speedSlider.removeListener(this);
+
+    juce::Logger::writeToLog("PlayerGUI cleanup completed");
+
+}
 
 void PlayerGUI::paint(juce::Graphics& g)
 {
@@ -49,24 +93,43 @@ void PlayerGUI::paint(juce::Graphics& g)
 void PlayerGUI::resized()
 {
     int y = 20;
+
     loadButton.setBounds(40, y, 80, 40);
     restartButton.setBounds(140, y, 80, 40);
     stopButton.setBounds(240, y, 80, 40);
-    muteButton.setBounds(340, y, 80, 40);//Salma
-    PauseButton.setBounds(40, 70, 80, 40);//Rahma
-    ToStartButton.setBounds(140, 70, 80, 40);
-    ToEndButton.setBounds(240, 70, 80, 40);
-    LoopButton.setBounds(340, 70, 80, 40);// Kenzy
-    /*prevButton.setBounds(340, y, 80, 40);
-    nextButton.setBounds(440, y, 80, 40);*/
-    volumeSlider.setBounds(40, 120, getWidth() - 40, 30);
-	speedSlider.setBounds(40, 170, getWidth() - 40, 30); //Salma2
+    muteButton.setBounds(340, y, 80, 40); // Salma
+    PauseButton.setBounds(440, y, 80, 40); // Rahma 
 
-    nowPlayingLabel.setBounds(40, 200, 80, 40);
-    titleLabel.setBounds(40, 250, 80, 40);
-    artistLabel.setBounds(40, 300, 80, 40);
-    durationLabel.setBounds(40, 350, 80, 40);
-    formatLabel.setBounds(40, 400, 80, 40);
+    
+    ToStartButton.setBounds(40, 70, 80, 40);
+    ToEndButton.setBounds(140, 70, 80, 40);
+    LoopButton.setBounds(240, 70, 80, 40); // Kenzy
+
+
+    int x = 120; 
+    setPointAButton.setBounds(40, x, 60, 30);
+    setPointBButton.setBounds(110, x, 60, 30);
+    clearLoopButton.setBounds(180, x, 70, 30);
+    toggleABLoopButton.setBounds(260, x, 70, 30);
+
+    loopPointALabel.setBounds(340, x, 70, 30);
+    loopPointBLabel.setBounds(420, x, 70, 30);
+    abLoopStatusLabel.setBounds(500, x, 100, 30);
+
+    
+    volumeSlider.setBounds(40, x + 40, getWidth() - 40, 30);
+    speedSlider.setBounds(40, x + 80, getWidth() - 40, 30); // Salma2
+
+    
+    progressSlider.setBounds(40,x + 130, getWidth() - 120, 25); // Kenzy2
+    progressLabel.setBounds(40, x + 155, 50, 20); 
+
+    
+    nowPlayingLabel.setBounds(40, x + 185, getWidth() - 80, 40); 
+    titleLabel.setBounds(40, x + 235, getWidth() - 80, 40); 
+    artistLabel.setBounds(40,x + 285, getWidth() - 80, 40); 
+    durationLabel.setBounds(40, x + 335, getWidth() - 80, 40); 
+    formatLabel.setBounds(40, x + 385, getWidth() - 80, 40); 
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button)
@@ -89,9 +152,16 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         onTostartButton();
     else if (button == &ToEndButton && onToEndButton)
         onToEndButton();
-    else if (button == &LoopButton && onLooping) {
+    else if (button == &LoopButton && onLooping) 
         onLooping();
-    }
+    else if (button == &setPointAButton && onSetLoopPointA)
+        onSetLoopPointA();
+    else if (button == &setPointBButton && onSetLoopPointB)
+        onSetLoopPointB();
+    else if (button == &clearLoopButton && onClearLoopPoints)
+        onClearLoopPoints();
+    else if (button == &toggleABLoopButton && onToggleABLoop)
+        onToggleABLoop();
 
 }
 void PlayerGUI::updatePauseButtonText(bool isPaused)//Rahma
@@ -103,6 +173,31 @@ void PlayerGUI::updateLoopButton(bool isLooping) {
     LoopButton.setButtonText(isLooping ? "Looping" : "Loop");
 }
 
+juce::String PlayerGUI::formatTime(double seconds) //Kenzy2
+{
+    int minutes = (int)(seconds / 60);
+    int secs = (int)seconds % 60;
+    return juce::String::formatted("%02d:%02d", minutes, secs);
+}
+
+void PlayerGUI::updateProgress(double currentPosition, double totalLength)
+{
+    if (totalLength > 0.0)
+    {
+        double progress = currentPosition / totalLength;
+        progressSlider.setValue(progress, juce::dontSendNotification);
+
+        
+        progressLabel.setText(formatTime(currentPosition), juce::dontSendNotification);
+    }
+}
+
+void PlayerGUI::timerCallback()
+{
+    if (onProgressUpdate)
+        onProgressUpdate();
+}
+
 void PlayerGUI::sliderValueChanged(juce::Slider* slider)
 {
     if (slider == &volumeSlider)
@@ -110,7 +205,10 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider)
         onVolumeChanged(slider->getValue());
 	else if (slider == &speedSlider) //Salma2
 		onSpeedChanged(slider->getValue());
+	else if (slider == &progressSlider ) // Kenzy2
+       onProgressChanged(slider->getValue());
 }
+
 void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& artist,
     const juce::String& duration, const juce::String& format)
 {
@@ -118,4 +216,26 @@ void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& ar
     artistLabel.setText("Artist: " + artist, juce::dontSendNotification);
     durationLabel.setText("Duration: " + duration, juce::dontSendNotification);
     formatLabel.setText("Format: " + format, juce::dontSendNotification);
+}
+
+void PlayerGUI::updateABLoopDisplay(double pointA, double pointB, bool active) //Kenzy3
+{
+    loopPointALabel.setText("A: " + formatTime(pointA), juce::dontSendNotification);
+    loopPointBLabel.setText("B: " + formatTime(pointB), juce::dontSendNotification);
+
+    if (active)
+    {
+        abLoopStatusLabel.setText("AB Loop: ON", juce::dontSendNotification);
+        abLoopStatusLabel.setColour(juce::Label::textColourId, juce::Colours::green);
+        toggleABLoopButton.setButtonText("AB Stop");
+    }
+    else
+    {
+        abLoopStatusLabel.setText("AB Loop: Off", juce::dontSendNotification);
+        abLoopStatusLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+        toggleABLoopButton.setButtonText("AB Loop");
+    }
+
+    setPointAButton.setToggleState(pointA >= 0, juce::dontSendNotification);
+    setPointBButton.setToggleState(pointB >= 0, juce::dontSendNotification);
 }

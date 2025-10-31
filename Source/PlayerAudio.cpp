@@ -6,11 +6,27 @@ PlayerAudio::PlayerAudio() : transportSource()
 	// wrap the transport source in a resampling source to allow speed changes //Salma2
 	resamplingSource = std::make_unique<juce::ResamplingAudioSource>(&transportSource, false,2);
     /*transportSource.setSource(readerSource.get());*/ 
+    juce::Logger::writeToLog("PlayerAudio constructed: " + juce::String((intptr_t)this));
+
 }
 
 PlayerAudio::~PlayerAudio()
 {
-    releaseResources();
+    juce::Logger::writeToLog("PlayerAudio destroyed: " + juce::String((intptr_t)this));
+
+    transportSource.stop();
+
+    if (resamplingSource != nullptr)
+    {
+        resamplingSource->releaseResources();
+        resamplingSource.reset();
+    }
+
+    transportSource.setSource(nullptr);
+
+    transportSource.releaseResources();
+
+    readerSource.reset();
 }
 
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
@@ -49,12 +65,19 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
         transportSource.setPosition(0.0);
         transportSource.start();
     }
+
+	if (ABLoopActive && transportSource.getCurrentPosition() >= loopPointB) //Kenzy3
+    {
+        transportSource.setPosition(loopPointA);
+    }
 }
 
 void PlayerAudio::releaseResources()
 {
+    juce::Logger::writeToLog("PlayerAudio releasing resources: " + juce::String((intptr_t)this));
     transportSource.releaseResources();
-	resamplingSource->releaseResources();//Salma2
+    if (resamplingSource != nullptr)
+        resamplingSource->releaseResources(); //salma2
 }
 
 
@@ -146,8 +169,8 @@ bool PlayerAudio::LoadFile(const juce::File& file)
 
             transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
 			resamplingSource->setResamplingRatio(playbackSpeed);//Salma2
-            //Extract MetaData
 
+            //Extract MetaData
             juce::String format = file.getFileExtension().toUpperCase();
             juce::String title = reader->metadataValues.getValue("Title", file.getFileNameWithoutExtension());
             juce::String artist = reader->metadataValues.getValue("Artist", "Unknown Artist");
@@ -163,9 +186,74 @@ bool PlayerAudio::LoadFile(const juce::File& file)
     return false;
 }
 
-juce::String PlayerAudio::formatTime(double seconds)
+juce::String PlayerAudio::formatTime(double seconds) //Kenzy3
 {
     int minutes = (int)(seconds / 60);
     int secs = (int)seconds % 60;
     return juce::String::formatted("%02d:%02d", minutes, secs);
+}
+
+
+void PlayerAudio::setLoopPointA()  //Kenzy3
+{
+    loopPointA = transportSource.getCurrentPosition();
+    hasPointA = true;
+
+    if (hasPointA && hasPointB)
+    {
+        ABLoopActive = true;
+        transportSource.setLooping(true);
+    }
+
+   
+    if (onABLoopChanged)
+        onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
+}
+
+void PlayerAudio::setLoopPointB()
+{
+    loopPointB = transportSource.getCurrentPosition();
+    hasPointB = true;
+
+    
+    if (hasPointA && loopPointB <= loopPointA)
+    {
+        loopPointB = loopPointA + 1.0; 
+    }
+
+    
+    if (hasPointA && hasPointB)
+    {
+        ABLoopActive = true;
+        transportSource.setLooping(true);
+    }
+
+    
+    if (onABLoopChanged)
+        onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
+}
+
+void PlayerAudio::clearLoopPoints()
+{
+    ABLoopActive = false;
+    hasPointA = false;
+    hasPointB = false;
+    loopPointA = 0.0;
+    loopPointB = 0.0;
+    transportSource.setLooping(isLooping); 
+
+    if (onABLoopChanged)
+        onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
+}
+
+void PlayerAudio::toggleABLoop()
+{
+    if (hasPointA && hasPointB)
+    {
+        ABLoopActive = !ABLoopActive;
+        transportSource.setLooping(ABLoopActive || isLooping);
+
+        if (onABLoopChanged)
+            onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
+    }
 }

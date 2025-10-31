@@ -29,6 +29,15 @@ public:
     double getCurrentPosition() const { return transportSource.getCurrentPosition(); }
     double getLengthInSeconds() const { return transportSource.getLengthInSeconds(); }
 
+	void setLoopPointA(); //Kenzy3
+    void setLoopPointB();
+    void clearLoopPoints();
+    void toggleABLoop();
+    bool isABLoopActive() const { return ABLoopActive; }
+    double getLoopPointA() const { return loopPointA; }
+    double getLoopPointB() const { return loopPointB; }
+
+    std::function<void(double pointA, double pointB, bool active)> onABLoopChanged;
 
     //double GetPositin() const;
     //double GetLength() const;
@@ -48,6 +57,12 @@ private:
     // Pitch correction //Salma22
     /*juce::dsp::PitchShifter<float> pitchShifter;
     juce::dsp::ProcessSpec spec;*/
+
+    double loopPointA = 0.0;  //Kenzy3
+    double loopPointB = 0.0;
+    bool ABLoopActive = false;
+    bool hasPointA = false;
+    bool hasPointB = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerAudio)
 };

@@ -1,5 +1,9 @@
+//#define //JUCE_ACCESSIBILITY 0
 #include <JuceHeader.h>
 #include "MainComponent.h"
+
+struct PlayerAudioLeakDetector { JUCE_DECLARE_NON_COPYABLE(PlayerAudioLeakDetector) };
+struct PlayerGUILeakDetector { JUCE_DECLARE_NON_COPYABLE(PlayerGUILeakDetector) };
 
 // Our application class
 class SimpleAudioPlayer : public juce::JUCEApplication
@@ -10,6 +14,7 @@ public:
 
     void initialise(const juce::String&) override
     {
+        //juce::Desktop::getInstance().setAccessibilityEnabled(false);
         // Create and show the main window
         mainWindow = std::make_unique<MainWindow>(getApplicationName());
     }

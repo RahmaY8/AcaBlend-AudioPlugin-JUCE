@@ -2,9 +2,11 @@
 #include <JuceHeader.h>
 #include "PlayerAudio.h"
 
+
 class PlayerGUI : public juce::Component,
 	public juce::Button::Listener,
-	public juce::Slider::Listener
+	public juce::Slider::Listener,
+	public juce::Timer
 {
 public:
 	PlayerGUI();
@@ -34,9 +36,17 @@ public:
 	void updateLoopButton(bool isLooping);
 	std::function<void(double)> onVolumeChanged;
 	std::function<void(double)> onSpeedChanged; //Salma2
+	std::function<void(double)> onProgressChanged; //Kenzy2
+	std::function<void()> onProgressUpdate;
+	void updateProgress(double positionInSeconds, double totalLengthInSeconds);
+	std::function<void()> onSetLoopPointA; //Kenzy3
+	std::function<void()> onSetLoopPointB;
+	std::function<void()> onClearLoopPoints;
+	std::function<void()> onToggleABLoop;
+	void updateABLoopDisplay(double pointA, double pointB, bool active);
 
 private:
-	PlayerAudio playerAudio;
+	//PlayerAudio playerAudio;
 	//GUI elements
 	juce::TextButton loadButton{ "Load Files" };
 	juce::TextButton restartButton{ "Restart" };
@@ -51,10 +61,21 @@ private:
 	bool isLooping = false;
 	juce::Slider volumeSlider;
 	juce::Slider speedSlider; //Salma2
+	juce::Slider progressSlider; //Kenzy2
+	juce::Label progressLabel;
+	juce::String formatTime(double seconds);
+	void timerCallback() override;
 
-	juce::Label nowPlayingLabel;
+	juce::Label nowPlayingLabel; //Rahma2
 	juce::Label titleLabel, artistLabel, durationLabel, formatLabel;
 
+	juce::TextButton setPointAButton{ "Set A" }; //Kenzy3
+	juce::TextButton setPointBButton{ "Set B" };
+	juce::TextButton clearLoopButton{ "Clear AB" };
+	juce::TextButton toggleABLoopButton{ "AB Loop" };
+	juce::Label loopPointALabel;
+	juce::Label loopPointBLabel;
+	juce::Label abLoopStatusLabel;
 
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerGUI)
