@@ -22,6 +22,9 @@ PlayerGUI::PlayerGUI()
     addAndMakeVisible(durationLabel);
     durationLabel.setText("Duration: ", juce::dontSendNotification);
     addAndMakeVisible(formatLabel);
+    //TrackList
+    addAndMakeVisible(tracksLoaded);
+    tracksLoaded.setModel(this);
 
 	//Labels for AB Loop //Kenzy3
     formatLabel.setText("Format: ", juce::dontSendNotification);
@@ -98,11 +101,11 @@ void PlayerGUI::resized()
     restartButton.setBounds(140, y, 80, 40);
     stopButton.setBounds(240, y, 80, 40);
     muteButton.setBounds(340, y, 80, 40); // Salma
-    PauseButton.setBounds(440, y, 80, 40); // Rahma 
 
-    
+    PauseButton.setBounds(440, y, 80, 40); // Rahma 
     ToStartButton.setBounds(40, 70, 80, 40);
     ToEndButton.setBounds(140, 70, 80, 40);
+
     LoopButton.setBounds(240, 70, 80, 40); // Kenzy
 
 
@@ -125,11 +128,12 @@ void PlayerGUI::resized()
     progressLabel.setBounds(40, x + 155, 50, 20); 
 
     
-    nowPlayingLabel.setBounds(40, x + 185, getWidth() - 80, 40); 
+    nowPlayingLabel.setBounds(40, x + 185, getWidth() - 80, 40);//Rahma2&3 
     titleLabel.setBounds(40, x + 235, getWidth() - 80, 40); 
     artistLabel.setBounds(40,x + 285, getWidth() - 80, 40); 
     durationLabel.setBounds(40, x + 335, getWidth() - 80, 40); 
     formatLabel.setBounds(40, x + 385, getWidth() - 80, 40); 
+    tracksLoaded.setBounds(300, x + 185, 350, 250);
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button)
@@ -209,7 +213,7 @@ void PlayerGUI::sliderValueChanged(juce::Slider* slider)
        onProgressChanged(slider->getValue());
 }
 
-void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& artist,
+void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& artist,//Rahma2
     const juce::String& duration, const juce::String& format)
 {
     titleLabel.setText("Title: " + title, juce::dontSendNotification);
@@ -217,6 +221,33 @@ void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& ar
     durationLabel.setText("Duration: " + duration, juce::dontSendNotification);
     formatLabel.setText("Format: " + format, juce::dontSendNotification);
 }
+void PlayerGUI::updateTrackList(const juce::StringArray& newtracks)//Rahma3
+{
+    tracknames = newtracks;
+    tracksLoaded.updateContent();
+}
+void PlayerGUI::listBoxItemClicked(int row, const juce::MouseEvent& event)
+{
+    if (onTrackSelected && row >= 0 && row < tracknames.size())
+    {
+        onTrackSelected(row); 
+    }
+}
+int PlayerGUI::getNumRows()
+{
+    return tracknames.size();
+}
+void PlayerGUI::paintListBoxItem(int rowNumber, juce::Graphics& g,
+    int width, int height, bool rowIsSelected)
+{
+    if (rowIsSelected)
+        g.fillAll(juce::Colours::darkcyan);
+
+    g.setColour(juce::Colours::cyan);
+    g.drawText(tracknames[rowNumber], 10, 0, width - 10, height, juce::Justification::left);
+}
+
+
 
 void PlayerGUI::updateABLoopDisplay(double pointA, double pointB, bool active) //Kenzy3
 {

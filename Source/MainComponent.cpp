@@ -31,11 +31,6 @@ MainComponent::MainComponent()
             playerGUI.updateProgress(currentPos, totalLength);
             };
 
-        playerAudio.MetadataLoaded = [this](const juce::String& title, const juce::String& artist, //Rahma2
-            const juce::String& duration, const juce::String& format) {
-                playerGUI.updateMetaData(title, artist, duration, format);
-            };
-
         playerGUI.onSetLoopPointA = [this] { playerAudio.setLoopPointA(); }; //Kenzy3
         playerGUI.onSetLoopPointB = [this] { playerAudio.setLoopPointB(); };
         playerGUI.onClearLoopPoints = [this] { playerAudio.clearLoopPoints(); };
@@ -43,6 +38,19 @@ MainComponent::MainComponent()
 
         playerAudio.onABLoopChanged = [this](double pointA, double pointB, bool active) {
             playerGUI.updateABLoopDisplay(pointA, pointB, active);
+            };
+
+        playerAudio.MetadataLoaded = [this](const juce::String& title, const juce::String& artist, //Rahma2
+            const juce::String& duration, const juce::String& format) {
+                playerGUI.updateMetaData(title, artist, duration, format);
+            };
+
+        playerGUI.onTrackSelected = [this](int trackindx) {//Rahma3
+            if (trackindx < loadedFiles.size())
+            {
+                playerAudio.LoadFile(loadedFiles[trackindx]);
+                playerAudio.start();
+            }
             };
 
         setSize(700, 600);
@@ -104,14 +112,21 @@ void MainComponent::loadAudioFile()
         "*.wav;*.mp3");
 
     fileChooser->launchAsync(
-        juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
-        [this](const juce::FileChooser& fc)
+        juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles |
+        juce::FileBrowserComponent::canSelectMultipleItems, [this](const juce::FileChooser& fc)
         {
-            auto file = fc.getResult();
-            if (file.existsAsFile())
+            auto results = fc.getResults();
+
+            juce::StringArray tracknames;
+            loadedFiles.clear();
+            for (auto& file : results)  // Loop through each file
             {
-                playerAudio.LoadFile(file);
-                playerAudio.start();
+                if (file.existsAsFile())
+                {
+                    tracknames.add(file.getFileName());  // Add to display list
+                    loadedFiles.add(file);
+                }
             }
+            playerGUI.updateTrackList(tracknames);
         });
 }

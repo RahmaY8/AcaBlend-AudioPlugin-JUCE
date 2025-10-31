@@ -23,6 +23,7 @@ private:
     //juce::Component player1;
     //void loadTrack(const juce::File& file);
     std::unique_ptr<juce::FileChooser> fileChooser;
+    juce::Array<juce::File> loadedFiles;//Rahma3
 
     void loadAudioFile();
 

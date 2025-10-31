@@ -6,6 +6,7 @@
 class PlayerGUI : public juce::Component,
 	public juce::Button::Listener,
 	public juce::Slider::Listener,
+	public juce::ListBoxModel, //Rahma3
 	public juce::Timer
 {
 public:
@@ -15,6 +16,10 @@ public:
 	void paint(juce::Graphics& g) override;
 	void resized() override;
 	void setVolumeSlider(double volume) { volumeSlider.setValue(volume); }
+
+	int getNumRows() override;
+	void paintListBoxItem(int rownumber, juce::Graphics& g,
+		int width, int height, bool rowIsSelected) override;//Rahma3
 
 	// Event handlers
 	void buttonClicked(juce::Button* button) override;
@@ -45,6 +50,12 @@ public:
 	std::function<void()> onToggleABLoop;
 	void updateABLoopDisplay(double pointA, double pointB, bool active);
 
+	juce::ListBox tracksLoaded;
+	juce::StringArray tracknames;
+	void updateTrackList(const juce::StringArray& newtracks);
+	void listBoxItemClicked(int row, const juce::MouseEvent& event) override;
+	std::function<void(int trackIndex)> onTrackSelected;//Rahma3
+
 private:
 	//PlayerAudio playerAudio;
 	//GUI elements
@@ -60,6 +71,7 @@ private:
 	juce::TextButton LoopButton{ "Loop" }; //Kenzy
 	bool isLooping = false;
 	juce::Slider volumeSlider;
+
 	juce::Slider speedSlider; //Salma2
 	juce::Slider progressSlider; //Kenzy2
 	juce::Label progressLabel;
