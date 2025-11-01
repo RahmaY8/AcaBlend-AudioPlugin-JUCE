@@ -12,7 +12,7 @@ class PlayerGUI : public juce::Component,
 public:
 	PlayerGUI();
 	~PlayerGUI() override;
-	
+
 	void paint(juce::Graphics& g) override;
 	void resized() override;
 	void setVolumeSlider(double volume) { volumeSlider.setValue(volume); }
@@ -49,6 +49,8 @@ public:
 	std::function<void()> onClearLoopPoints;
 	std::function<void()> onToggleABLoop;
 	void updateABLoopDisplay(double pointA, double pointB, bool active);
+	std::function<juce::AudioThumbnail* ()> onGetAudioThumbnail; //Salma3
+	std::function<bool()> onHasAudioLoaded; 
 
 	juce::ListBox tracksLoaded;
 	juce::StringArray tracknames;

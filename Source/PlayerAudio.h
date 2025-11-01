@@ -22,22 +22,25 @@ public:
     void ToEnd();
     void Loop(); //Kenzy
     bool isLooped() const { return isLooping; };
-	void setspeed(float speed); //Salma2
+    void setspeed(float speed); //Salma2
     std::function<void(const juce::String& title, const juce::String& artist,
         const juce::String& duration, const juce::String& format)> MetadataLoaded;
 
     double getCurrentPosition() const { return transportSource.getCurrentPosition(); }
     double getLengthInSeconds() const { return transportSource.getLengthInSeconds(); }
 
-	void setLoopPointA(); //Kenzy3
+    void setLoopPointA(); //Kenzy3
     void setLoopPointB();
     void clearLoopPoints();
     void toggleABLoop();
     bool isABLoopActive() const { return ABLoopActive; }
     double getLoopPointA() const { return loopPointA; }
     double getLoopPointB() const { return loopPointB; }
+    juce::AudioThumbnail* getAudioThumbnail() { return audioThumbnail.get(); } //Salma3
 
     std::function<void(double pointA, double pointB, bool active)> onABLoopChanged;
+	
+
 
     //double GetPositin() const;
     //double GetLength() const;
@@ -47,22 +50,23 @@ private:
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;
-	std::unique_ptr<juce::ResamplingAudioSource> resamplingSource; //Salma2
-	bool muted = false; //Salma
+    std::unique_ptr<juce::ResamplingAudioSource> resamplingSource; //Salma2
+    bool muted = false; //Salma
     float previousGain = 0.5f;
     bool isLooping = false;
     double currentSampleRate = 44100.0;
-	float playbackSpeed = 1.0f; //Salma2
+    float playbackSpeed = 1.0f; //Salma2
     juce::String formatTime(double sec);
-    // Pitch correction //Salma22
-    /*juce::dsp::PitchShifter<float> pitchShifter;
-    juce::dsp::ProcessSpec spec;*/
+    
 
     double loopPointA = 0.0;  //Kenzy3
     double loopPointB = 0.0;
     bool ABLoopActive = false;
     bool hasPointA = false;
     bool hasPointB = false;
+	juce::AudioFormatManager thumbnailFormatManager; //Salma3
+	juce::AudioThumbnailCache thumbnailCache;
+	std::unique_ptr<juce::AudioThumbnail> audioThumbnail; 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerAudio)
 };

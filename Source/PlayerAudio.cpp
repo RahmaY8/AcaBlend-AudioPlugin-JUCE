@@ -1,11 +1,13 @@
 #include "PlayerAudio.h"
 
-PlayerAudio::PlayerAudio() : transportSource()
+PlayerAudio::PlayerAudio() : transportSource() , thumbnailCache(5) //Salma3
+
 {
     formatManager.registerBasicFormats();
-	// wrap the transport source in a resampling source to allow speed changes //Salma2
-	resamplingSource = std::make_unique<juce::ResamplingAudioSource>(&transportSource, false,2);
-    /*transportSource.setSource(readerSource.get());*/ 
+	thumbnailFormatManager.registerBasicFormats(); //Salma3
+	audioThumbnail = std::make_unique<juce::AudioThumbnail>(512, thumbnailFormatManager, thumbnailCache);
+    // wrap the transport source in a resampling source to allow speed changes //Salma2
+    resamplingSource = std::make_unique<juce::ResamplingAudioSource>(&transportSource, false, 2);
     juce::Logger::writeToLog("PlayerAudio constructed: " + juce::String((intptr_t)this));
 
 }
@@ -32,15 +34,9 @@ PlayerAudio::~PlayerAudio()
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
-	resamplingSource->prepareToPlay(samplesPerBlockExpected, sampleRate);//Salma2
+    resamplingSource->prepareToPlay(samplesPerBlockExpected, sampleRate);//Salma2
 
-	// DSP for Pitch correction //Salma22
-	/*spec.sampleRate = sampleRate;
-	spec.maximumBlockSize = samplesPerBlockExpected;
-	spec.numChannels = 2;
-
-	pitchShifter.prepare(spec);
-	pitchShifter.setPitchSemitones(0.0f);*/
+    
 
 }
 
@@ -52,12 +48,8 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
         return;
     }
 
-	 resamplingSource->getNextAudioBlock(bufferToFill); //Salma2
-	/*transportSource.getNextAudioBlock(bufferToFill);*/ //Salma2
-	 // Pitch correction process //Salma22
-	/* juce::dsp::AudioBlock<float> block(*bufferToFill.buffer);
-	 juce::dsp::ProcessContextReplacing<float> context(block);
-	 pitchShifter.process(context);*/
+    resamplingSource->getNextAudioBlock(bufferToFill); //Salma2
+    
 
 
     if (isLooping && transportSource.hasStreamFinished())
@@ -66,7 +58,7 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
         transportSource.start();
     }
 
-	if (ABLoopActive && transportSource.getCurrentPosition() >= loopPointB) //Kenzy3
+    if (ABLoopActive && transportSource.getCurrentPosition() >= loopPointB) //Kenzy3
     {
         transportSource.setPosition(loopPointA);
     }
@@ -148,10 +140,10 @@ void PlayerAudio::Loop() //kenzy
 
 void PlayerAudio::setspeed(float speed) //Salma2
 {
-	playbackSpeed = juce::jlimit(0.5f, 2.0f, speed);
+    playbackSpeed = juce::jlimit(0.5f, 2.0f, speed);
     resamplingSource->setResamplingRatio(playbackSpeed);
 
-	float semitones = 12.0f * std::log2(1.0f / playbackSpeed);
+    float semitones = 12.0f * std::log2(1.0f / playbackSpeed);
 }
 bool PlayerAudio::LoadFile(const juce::File& file)
 {
@@ -168,7 +160,7 @@ bool PlayerAudio::LoadFile(const juce::File& file)
             readerSource->setLooping(isLooping);
 
             transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
-			resamplingSource->setResamplingRatio(playbackSpeed);//Salma2
+            resamplingSource->setResamplingRatio(playbackSpeed);//Salma2
 
             //Extract MetaData
             juce::String format = file.getFileExtension().toUpperCase();
@@ -179,6 +171,8 @@ bool PlayerAudio::LoadFile(const juce::File& file)
 
             if (MetadataLoaded)
                 MetadataLoaded(title, artist, duration, format);
+			audioThumbnail->clear(); //Salma3
+            audioThumbnail->setSource(new juce::FileInputSource(file)); 
 
             return true;
         }
@@ -205,7 +199,7 @@ void PlayerAudio::setLoopPointA()  //Kenzy3
         transportSource.setLooping(true);
     }
 
-   
+
     if (onABLoopChanged)
         onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
 }
@@ -215,20 +209,20 @@ void PlayerAudio::setLoopPointB()
     loopPointB = transportSource.getCurrentPosition();
     hasPointB = true;
 
-    
+
     if (hasPointA && loopPointB <= loopPointA)
     {
-        loopPointB = loopPointA + 1.0; 
+        loopPointB = loopPointA + 1.0;
     }
 
-    
+
     if (hasPointA && hasPointB)
     {
         ABLoopActive = true;
         transportSource.setLooping(true);
     }
 
-    
+
     if (onABLoopChanged)
         onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
 }
@@ -240,7 +234,7 @@ void PlayerAudio::clearLoopPoints()
     hasPointB = false;
     loopPointA = 0.0;
     loopPointB = 0.0;
-    transportSource.setLooping(isLooping); 
+    transportSource.setLooping(isLooping);
 
     if (onABLoopChanged)
         onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
