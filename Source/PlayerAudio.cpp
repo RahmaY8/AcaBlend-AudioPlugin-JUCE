@@ -127,7 +127,7 @@ void PlayerAudio::ToEnd()
 {
     if (readerSource != nullptr) {
         double wholeLength = transportSource.getLengthInSeconds();
-        transportSource.setPosition(wholeLength - 3.0);
+        transportSource.setPosition(wholeLength - 1.0);
     }
 }
 
@@ -147,6 +147,8 @@ void PlayerAudio::setspeed(float speed) //Salma2
 }
 bool PlayerAudio::LoadFile(const juce::File& file)
 {
+    transportSource.stop();          
+    paused = false;
     if (file.existsAsFile())
     {
         if (auto* reader = formatManager.createReaderFor(file))
@@ -173,10 +175,12 @@ bool PlayerAudio::LoadFile(const juce::File& file)
                 MetadataLoaded(title, artist, duration, format);
 			audioThumbnail->clear(); //Salma3
             audioThumbnail->setSource(new juce::FileInputSource(file)); 
+             lastDuration = duration;
 
             return true;
         }
     }
+    lastDuration = "00:00";
     return false;
 }
 

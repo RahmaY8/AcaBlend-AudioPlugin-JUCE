@@ -17,6 +17,8 @@ public:
     void setPosition(double pos);
     void mute(bool shouldMute);//Salma
     void Pause_Continue();//Rahma
+    juce::String getLastDuration() const { return lastDuration; }
+
     bool isPaused() const { return paused; }
     void ToStart();
     void ToEnd();
@@ -47,6 +49,7 @@ public:
 
 private:
     bool paused = false;//Rahma
+    juce::String lastDuration;
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;

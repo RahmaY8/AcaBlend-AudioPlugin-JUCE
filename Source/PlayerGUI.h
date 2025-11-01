@@ -6,7 +6,7 @@
 class PlayerGUI : public juce::Component,
 	public juce::Button::Listener,
 	public juce::Slider::Listener,
-	public juce::ListBoxModel, //Rahma3
+	public juce::TableListBoxModel, 
 	public juce::Timer
 {
 public:
@@ -18,8 +18,11 @@ public:
 	void setVolumeSlider(double volume) { volumeSlider.setValue(volume); }
 
 	int getNumRows() override;
-	void paintListBoxItem(int rownumber, juce::Graphics& g,
-		int width, int height, bool rowIsSelected) override;//Rahma3
+	void paintCell(juce::Graphics& g, int rowNumber, int columnId, int width,
+		int height, bool rowIsSelected) override;
+	void cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event);
+	void paintRowBackground( juce::Graphics& g, int rowNumber,
+		int width, int height, bool rowIsSelected) override ;//Rahma3
 
 	// Event handlers
 	void buttonClicked(juce::Button* button) override;
@@ -30,8 +33,7 @@ public:
 
 	// Callbacks
 	std::function<void()> onLoadButton;
-	std::function<void()> onRestartButton;
-	std::function<void()> onStopButton;
+	
 	std::function<void(bool)> onMuteToggle; //Salma
 	std::function<void()> onPauseButton;	//Rahma
 	void updatePauseButtonText(bool isPaused);
@@ -52,24 +54,24 @@ public:
 	std::function<juce::AudioThumbnail* ()> onGetAudioThumbnail; //Salma3
 	std::function<bool()> onHasAudioLoaded; 
 
-	juce::ListBox tracksLoaded;
+	juce::TableListBox tracksLoaded;
 	juce::StringArray tracknames;
-	void updateTrackList(const juce::StringArray& newtracks);
-	void listBoxItemClicked(int row, const juce::MouseEvent& event) override;
+	juce::StringArray durations;
+	void updateTrackList(const juce::StringArray& newtracks, const juce::StringArray& newdurations);
+	void listBoxItemClicked(int row, const juce::MouseEvent& event) ;
 	std::function<void(int trackIndex)> onTrackSelected;//Rahma3
 
 private:
 	//PlayerAudio playerAudio;
 	//GUI elements
-	juce::TextButton loadButton{ "Load Files" };
-	juce::TextButton restartButton{ "Restart" };
-	juce::TextButton stopButton{ "Stop" };
+	juce::TextButton loadButton{ "Load Into Playlist" };
+	
 	juce::TextButton muteButton{ "Mute" }; //Salma
 	bool isMuted = false;
 	double previousVolume = 0.5;
-	juce::TextButton PauseButton{ "Pause" }; //Rahma
-	juce::TextButton ToStartButton{ "Go To Start" };
-	juce::TextButton ToEndButton{ "Go To End" };
+	juce::TextButton PauseButton{ "||" }; //Rahma
+	juce::TextButton ToStartButton{ "|<" };
+	juce::TextButton ToEndButton{ ">|" };
 	juce::TextButton LoopButton{ "Loop" }; //Kenzy
 	bool isLooping = false;
 	juce::Slider volumeSlider;
