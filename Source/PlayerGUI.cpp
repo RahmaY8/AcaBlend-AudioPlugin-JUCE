@@ -8,6 +8,7 @@ PlayerGUI::PlayerGUI()
     for (auto* btn : { &loadButton , &muteButton , &PauseButton, &ToStartButton ,
                        &ToEndButton ,&LoopButton ,& setPointAButton,& setPointBButton,& clearLoopButton,& toggleABLoopButton })
     {
+		btn->setColour(juce::TextButton::buttonColourId, juce::Colours::slateblue);
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
@@ -42,6 +43,7 @@ PlayerGUI::PlayerGUI()
     volumeSlider.setValue(0.5);
     volumeSlider.addListener(this);
     addAndMakeVisible(volumeSlider);
+	
 
     // Speed slider //Salma2
     speedSlider.setRange(0.5, 2.0, 0.1);
@@ -89,14 +91,14 @@ PlayerGUI::~PlayerGUI() {
 
 void PlayerGUI::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::darkgrey);
+    g.fillAll(juce::Colours::black);
 	// Draw Waveform //Salma3
     int x = 120;
     int waveformY = x + 180;
 	int waveformHeight = 80;
 	juce::Rectangle<int> waveformArea(40, 20, getWidth() - 80, waveformHeight);
-	g.setColour(juce::Colours::black);
-	g.fillRect(waveformArea);
+	g.setColour(juce::Colours::darkslateblue);
+    g.fillRoundedRectangle(waveformArea.toFloat(), 10.0f);
 
     if (onGetAudioThumbnail && onHasAudioLoaded)
     {
@@ -105,13 +107,13 @@ void PlayerGUI::paint(juce::Graphics& g)
 
         if (thumbnail && hasAudio && thumbnail->getTotalLength() > 0.0)
         {
-            g.setColour(juce::Colours::lightblue);
+            g.setColour(juce::Colours::lightgrey);
             thumbnail->drawChannels(g, waveformArea, 0.0, thumbnail->getTotalLength(), 1.0f);
 
             double progress = progressSlider.getValue();
             int pointerX = waveformArea.getX() + (int)(progress * waveformArea.getWidth());
 
-            g.setColour(juce::Colours::red);
+            g.setColour(juce::Colours::aliceblue);
             g.drawLine(pointerX, waveformArea.getY(), pointerX, waveformArea.getBottom(), 2.0f);
         }
         else
@@ -123,13 +125,13 @@ void PlayerGUI::paint(juce::Graphics& g)
 
         // Draw metadata table background and border
         int metaX = 360, metaY = 380, metaWidth = 280, metaHeight = 160;
-        g.setColour(juce::Colours::black);
+        g.setColour(juce::Colours::darkslateblue);
         g.fillRect(metaX, metaY, metaWidth, metaHeight);
         g.setColour(juce::Colours::white);
         g.drawRect(metaX, metaY, metaWidth, metaHeight, 1);
 
         // Draw table header
-        g.setColour(juce::Colours::lightgrey);
+        g.setColour(juce::Colours::slateblue);
         g.fillRect(metaX, metaY, metaWidth, 40);
         g.setColour(juce::Colours::black);
         g.drawText("Now Playing", metaX + 10, metaY, metaWidth - 20, 25, juce::Justification::left);
@@ -140,6 +142,21 @@ void PlayerGUI::paint(juce::Graphics& g)
         {
             g.drawLine(metaX, metaY + 40 * i, metaX + metaWidth, metaY + 40 * i, 1);
         }
+        // Boarder for buttons
+        g.setColour(juce::Colours::darkslateblue);
+        g.fillRoundedRectangle(50, 180, 580, 50, 10.0f);
+
+        // Boarder for AB  
+        g.setColour(juce::Colours::darkslateblue);
+        g.fillRoundedRectangle(50, 240, 580, 50, 10.0f);
+
+        // Boarder for VolumeSlider
+        g.setColour(juce::Colours::darkslateblue);
+        g.fillRoundedRectangle(50, 310, 280, 50, 10.0f);
+
+        // Boarder for SpeedSlider
+        g.setColour(juce::Colours::darkslateblue);
+        g.fillRoundedRectangle(340, 310, 290, 50, 10.0f);
     
 }
      
@@ -166,8 +183,8 @@ void PlayerGUI::resized()
     abLoopStatusLabel.setBounds(520, 250, 100, 30);
 
 
-    volumeSlider.setBounds(40, 320, 280, 30);
-    speedSlider.setBounds(360, 320, 280, 30); // Salma2
+    volumeSlider.setBounds(60, 320, 270, 30);
+    speedSlider.setBounds(350, 320, 280, 30); // Salma2
 
 
     progressSlider.setBounds(40, 120, getWidth() - 80, 20); // Kenzy2
@@ -305,10 +322,10 @@ void PlayerGUI::paintRowBackground( juce::Graphics& g, int rowNumber,
     int width, int height, bool rowIsSelected)
 {
     if (rowIsSelected)
-        g.fillAll(juce::Colours::darkcyan);
+        g.fillAll(juce::Colours::midnightblue);
 
     else if (rowNumber % 2)
-        g.fillAll(juce::Colours::darkgrey.withAlpha(0.1f));
+        g.fillAll(juce::Colours::navy.withAlpha(0.1f));
 }
 void PlayerGUI::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
@@ -317,7 +334,8 @@ void PlayerGUI::paintCell(juce::Graphics& g, int rowNumber, int columnId, int wi
     if (columnId == 1) // Track name column
         g.drawText(tracknames[rowNumber], 10, 0, width - 10, height, juce::Justification::left);
     else if (columnId == 2) // Duration column  
-        g.drawText(durations[rowNumber], 0, 0, width, height, juce::Justification::centred); // Temporary
+        g.drawText(durations[rowNumber], 0, 0, width, height, juce::Justification::centred);// Temporary
+
 }
 void PlayerGUI::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
 {
