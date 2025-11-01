@@ -118,6 +118,18 @@ void PlayerAudio::Pause_Continue()//Rahma
         transportSource.start();
     }
 }
+juce::String PlayerAudio::extractDurationOnly(const juce::File& file)
+{
+    if (file.existsAsFile())
+    {
+        if (auto* reader = formatManager.createReaderFor(file))
+        {
+            double Duration = reader->lengthInSamples / reader->sampleRate;
+            return formatTime(Duration);
+        }
+    }
+    return "00:00";
+}
 void PlayerAudio::ToStart()
 {
     transportSource.setPosition(0.0);
@@ -145,7 +157,7 @@ void PlayerAudio::setspeed(float speed) //Salma2
 
     float semitones = 12.0f * std::log2(1.0f / playbackSpeed);
 }
-bool PlayerAudio::LoadFile(const juce::File& file)
+bool PlayerAudio::LoadFile(const juce::File& file, bool shouldUpdateMetadata )
 {
     transportSource.stop();          
     paused = false;
@@ -171,11 +183,11 @@ bool PlayerAudio::LoadFile(const juce::File& file)
             double Duration = reader->lengthInSamples / reader->sampleRate;
             juce::String duration = formatTime(Duration);
 
-            if (MetadataLoaded)
+            if (shouldUpdateMetadata && MetadataLoaded)
                 MetadataLoaded(title, artist, duration, format);
 			audioThumbnail->clear(); //Salma3
             audioThumbnail->setSource(new juce::FileInputSource(file)); 
-             lastDuration = duration;
+           lastDuration = duration;
 
             return true;
         }

@@ -49,7 +49,7 @@ MainComponent::MainComponent()
         playerGUI.onTrackSelected = [this](int trackindx) {//Rahma3
             if (trackindx < loadedFiles.size())
             {
-                playerAudio.LoadFile(loadedFiles[trackindx]);
+                playerAudio.LoadFile(loadedFiles[trackindx], true);
                 playerAudio.start();
                 playerGUI.updatePauseButtonText(false);
             }
@@ -123,7 +123,7 @@ void MainComponent::loadAudioFile()
             {
                 if (file.existsAsFile())
                 {
-                    playerAudio.LoadFile(file);
+                    playerAudio.LoadFile(file, false);
                     tracknames.add(file.getFileName());  // Add to display list
                     loadedFiles.add(file);
                     durations.add(playerAudio.getLastDuration());

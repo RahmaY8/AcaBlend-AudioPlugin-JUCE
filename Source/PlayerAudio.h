@@ -17,6 +17,7 @@ public:
     void setPosition(double pos);
     void mute(bool shouldMute);//Salma
     void Pause_Continue();//Rahma
+    juce::String extractDurationOnly(const juce::File& file);
     juce::String getLastDuration() const { return lastDuration; }
 
     bool isPaused() const { return paused; }
@@ -25,9 +26,11 @@ public:
     void Loop(); //Kenzy
     bool isLooped() const { return isLooping; };
     void setspeed(float speed); //Salma2
+
     std::function<void(const juce::String& title, const juce::String& artist,
         const juce::String& duration, const juce::String& format)> MetadataLoaded;
-
+    bool LoadFile(const juce::File& file, bool shouldUpdateMetadata = true);
+    bool shouldUpdateMetadata = true;
     double getCurrentPosition() const { return transportSource.getCurrentPosition(); }
     double getLengthInSeconds() const { return transportSource.getLengthInSeconds(); }
 
