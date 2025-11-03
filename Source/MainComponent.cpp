@@ -114,6 +114,22 @@ MainComponent::MainComponent()
                 };
     setSize(1400, 550);
     setAudioChannels(0, 2);
+
+    addAndMakeVisible(masterStartButton);
+    masterStartButton.setColour(juce::TextButton::buttonColourId, juce::Colour(109, 93, 255));
+    masterStartButton.onClick = [this] {
+        playerAudio1.start();
+        playerAudio2.start();
+        playerGUI1.updatePauseButtonText(false);
+        playerGUI2.updatePauseButtonText(false);
+        };
+
+    addAndMakeVisible(masterStopButton);
+    masterStopButton.setColour(juce::TextButton::buttonColourId, juce::Colour(109, 93, 255));
+    masterStopButton.onClick = [this] {
+        playerAudio1.stop();
+        playerAudio2.stop();
+        };
 }
 
 MainComponent::~MainComponent()
@@ -197,6 +213,12 @@ void MainComponent::resized()
     auto area = getLocalBounds();
     playerGUI1.setBounds(area.removeFromLeft(getWidth() / 2));
     playerGUI2.setBounds(area);
+
+    // Master button at the top center
+    auto masterButtonArea = area.removeFromTop(40).withTrimmedTop(5);
+    masterStartButton.setBounds(50, 550, 100, 30);
+    masterStopButton.setBounds(750, 550, 100, 30);
+
 }
 
 void MainComponent::loadAudioFile(int playernumber)

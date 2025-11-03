@@ -29,7 +29,8 @@ private:
     std::unique_ptr<juce::FileChooser> fileChooser;
     juce::Array<juce::File> loadedFiles1;//Rahma3
     juce::Array<juce::File> loadedFiles2;
-
+    juce::TextButton masterStartButton{ "Master Play" };
+    juce::TextButton masterStopButton{ "Master Pause" };
     void loadAudioFile(int playernumber);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
