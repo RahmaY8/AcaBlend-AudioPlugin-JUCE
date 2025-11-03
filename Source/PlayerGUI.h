@@ -77,8 +77,8 @@ private:
 	juce::TextButton ToStartButton{ "|<" };
 	juce::TextButton ToEndButton{ ">|" };
 	juce::TextButton LoopButton{ "Loop" }; //Kenzy
-	juce::TextButton skipForwardButton{ "+10s" }; //Salma bonus
-	juce::TextButton skipBackwardButton{ "-10s" };
+	juce::TextButton skipForwardButton{ ">>" }; //Salma bonus
+	juce::TextButton skipBackwardButton{ "<<" };
 	bool isLooping = false;
 	juce::Slider volumeSlider;
 
