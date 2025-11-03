@@ -275,7 +275,7 @@ void PlayerGUI::updateLoopButton(bool isLooping) {
 }
 
 void PlayerGUI::updateActivePlayerButtonText(bool active) {
-    activeplayerButton.setButtonText(active ? "on" : "off");
+    activeplayerButton.setButtonText(active ? "On" : "Off");
 };
 
 juce::String PlayerGUI::formatTime(double seconds) //Kenzy2
