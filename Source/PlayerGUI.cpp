@@ -6,9 +6,9 @@ PlayerGUI::PlayerGUI()
     juce::Logger::writeToLog("PlayerGUI constructed: " + juce::String((intptr_t)this));
     // Add buttons
     for (auto* btn : { &loadButton , &muteButton , &PauseButton, &ToStartButton ,
-                       &ToEndButton ,&LoopButton ,& setPointAButton,& setPointBButton,& clearLoopButton,& toggleABLoopButton })
+                       &ToEndButton ,&LoopButton ,&setPointAButton,&setPointBButton,&clearLoopButton,&toggleABLoopButton })
     {
-		btn->setColour(juce::TextButton::buttonColourId, juce::Colours::slateblue);
+        btn->setColour(juce::TextButton::buttonColourId, juce::Colours::slateblue);
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
@@ -43,7 +43,7 @@ PlayerGUI::PlayerGUI()
     volumeSlider.setValue(0.5);
     volumeSlider.addListener(this);
     addAndMakeVisible(volumeSlider);
-	
+
 
     // Speed slider //Salma2
     speedSlider.setRange(0.5, 2.0, 0.1);
@@ -92,12 +92,12 @@ PlayerGUI::~PlayerGUI() {
 void PlayerGUI::paint(juce::Graphics& g)
 {
     g.fillAll(juce::Colours::black);
-	// Draw Waveform //Salma3
+    // Draw Waveform //Salma3
     int x = 120;
     int waveformY = x + 180;
-	int waveformHeight = 80;
-	juce::Rectangle<int> waveformArea(40, 20, getWidth() - 80, waveformHeight);
-	g.setColour(juce::Colours::darkslateblue);
+    int waveformHeight = 80;
+    juce::Rectangle<int> waveformArea(40, 20, 620, waveformHeight);
+    g.setColour(juce::Colours::darkslateblue);
     g.fillRoundedRectangle(waveformArea.toFloat(), 10.0f);
 
     if (onGetAudioThumbnail && onHasAudioLoaded)
@@ -123,43 +123,43 @@ void PlayerGUI::paint(juce::Graphics& g)
         }
     }
 
-        // Draw metadata table background and border
-        int metaX = 360, metaY = 380, metaWidth = 280, metaHeight = 160;
-        g.setColour(juce::Colours::darkslateblue);
-        g.fillRect(metaX, metaY, metaWidth, metaHeight);
-        g.setColour(juce::Colours::white);
-        g.drawRect(metaX, metaY, metaWidth, metaHeight, 1);
+    // Draw metadata table background and border
+    int metaX = 360, metaY = 380, metaWidth = 270, metaHeight = 160;
+    g.setColour(juce::Colours::darkslateblue);
+    g.fillRect(metaX, metaY, metaWidth, metaHeight);
+    g.setColour(juce::Colours::white);
+    g.drawRect(metaX, metaY, metaWidth, metaHeight, 1);
 
-        // Draw table header
-        g.setColour(juce::Colours::slateblue);
-        g.fillRect(metaX, metaY, metaWidth, 40);
-        g.setColour(juce::Colours::black);
-        g.drawText("Now Playing", metaX + 10, metaY, metaWidth - 20, 25, juce::Justification::left);
+    // Draw table header
+    g.setColour(juce::Colours::slateblue);
+    g.fillRect(metaX, metaY, metaWidth, 40);
+    g.setColour(juce::Colours::black);
+    g.drawText("Now Playing", metaX + 10, metaY, metaWidth - 20, 25, juce::Justification::left);
 
-        // Draw row separators
-        g.setColour(juce::Colours::grey);
-        for (int i = 1; i < 4; i++)
-        {
-            g.drawLine(metaX, metaY + 40 * i, metaX + metaWidth, metaY + 40 * i, 1);
-        }
-        // Boarder for buttons
-        g.setColour(juce::Colours::darkslateblue);
-        g.fillRoundedRectangle(50, 180, 580, 50, 10.0f);
+    // Draw row separators
+    g.setColour(juce::Colours::grey);
+    for (int i = 1; i < 4; i++)
+    {
+        g.drawLine(metaX, metaY + 40 * i, metaX + metaWidth, metaY + 40 * i, 1);
+    }
+    // Boarder for buttons
+    g.setColour(juce::Colours::darkslateblue);
+    g.fillRoundedRectangle(50, 180, 580, 50, 10.0f);
 
-        // Boarder for AB  
-        g.setColour(juce::Colours::darkslateblue);
-        g.fillRoundedRectangle(50, 240, 580, 50, 10.0f);
+    // Boarder for AB  
+    g.setColour(juce::Colours::darkslateblue);
+    g.fillRoundedRectangle(50, 240, 580, 50, 10.0f);
 
-        // Boarder for VolumeSlider
-        g.setColour(juce::Colours::darkslateblue);
-        g.fillRoundedRectangle(50, 310, 280, 50, 10.0f);
+    // Boarder for VolumeSlider
+    g.setColour(juce::Colours::darkslateblue);
+    g.fillRoundedRectangle(50, 310, 280, 50, 10.0f);
 
-        // Boarder for SpeedSlider
-        g.setColour(juce::Colours::darkslateblue);
-        g.fillRoundedRectangle(340, 310, 290, 50, 10.0f);
-    
+    // Boarder for SpeedSlider
+    g.setColour(juce::Colours::darkslateblue);
+    g.fillRoundedRectangle(340, 310, 290, 50, 10.0f);
+
 }
-     
+
 
 
 void PlayerGUI::resized()
@@ -172,7 +172,7 @@ void PlayerGUI::resized()
     ToStartButton.setBounds(180, 190, 80, 30);
     ToEndButton.setBounds(420, 190, 80, 30);
     LoopButton.setBounds(540, 190, 80, 30); // Kenzy
-     
+
     setPointAButton.setBounds(60, 250, 60, 30);
     setPointBButton.setBounds(130, 250, 60, 30);
     clearLoopButton.setBounds(200, 250, 70, 30);
@@ -187,35 +187,23 @@ void PlayerGUI::resized()
     speedSlider.setBounds(350, 320, 280, 30); // Salma2
 
 
-    progressSlider.setBounds(40, 120, getWidth() - 80, 20); // Kenzy2
+    progressSlider.setBounds(40, 120, 620, 20); // Kenzy2
     progressLabel.setBounds(40, 145, 50, 20);
 
-	int waveformY = x + 180; // Salma3
+    int waveformY = x + 180; // Salma3
 
-    //nowPlayingLabel.setBounds(40, x + 185, getWidth() - 80, 40);//Rahma2&3 
-    //titleLabel.setBounds(40, x + 235, getWidth() - 80, 40);
-    //artistLabel.setBounds(40, x + 285, getWidth() - 80, 40);
-    //durationLabel.setBounds(40, x + 335, getWidth() - 80, 40);
-    //formatLabel.setBounds(40, x + 385, getWidth() - 80, 40);
-    //tracksLoaded.setBounds(300, x + 185, 350, 250);
-	//nowPlayingLabel.setBounds(40, waveformY + 90, getWidth() - 80, 40);//Rahma2&3
-	//titleLabel.setBounds(40, waveformY + 140, getWidth() - 80, 40);
-	//artistLabel.setBounds(40, waveformY + 190, getWidth() - 80, 40);
-	//durationLabel.setBounds(40, waveformY + 240, getWidth() - 80, 40);
-	//formatLabel.setBounds(40, waveformY + 290, getWidth() - 80, 40);
-	tracksLoaded.setBounds(20, 420, 330, 120); //Salma3
-    //330, 510, 130, 30
-        
-
-        int metaX = 360, metaY = 380, metaWidth = 310;
-
-        // Position labels inside the table rows
-        //nowPlayingLabel.setBounds(metaX, metaY, metaWidth, 25);
-        titleLabel.setBounds(metaX + 10, metaY + 40, metaWidth - 20, 25);
-        artistLabel.setBounds(metaX + 10, metaY + 80, metaWidth - 20, 25);
-        //durationLabel.setBounds(metaX + 10, metaY + 75, metaWidth - 20, 25);
-        formatLabel.setBounds(metaX + 10, metaY + 120, metaWidth - 20, 25);
     
+    tracksLoaded.setBounds(20, 420, 330, 120); //Salma3
+    
+
+
+    int metaX = 360, metaY = 380, metaWidth = 310;
+
+    
+    titleLabel.setBounds(metaX + 10, metaY + 40, metaWidth - 20, 25);
+    artistLabel.setBounds(metaX + 10, metaY + 80, metaWidth - 20, 25);
+    formatLabel.setBounds(metaX + 10, metaY + 120, metaWidth - 20, 25);
+
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button)
@@ -278,7 +266,7 @@ void PlayerGUI::timerCallback()
 {
     if (onProgressUpdate)
         onProgressUpdate();
-	repaint(); // To update the waveform display //Salma3
+    repaint(); // To update the waveform display //Salma3
 }
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider)
@@ -302,8 +290,8 @@ void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& ar
 }
 void PlayerGUI::updateTrackList(const juce::StringArray& newtracks, const juce::StringArray& newdurations)
 {
-   
-    tracknames.addArray(newtracks); 
+
+    tracknames.addArray(newtracks);
     durations.addArray(newdurations);
     tracksLoaded.updateContent();
 }
@@ -318,7 +306,7 @@ int PlayerGUI::getNumRows()
 {
     return tracknames.size();
 }
-void PlayerGUI::paintRowBackground( juce::Graphics& g, int rowNumber,
+void PlayerGUI::paintRowBackground(juce::Graphics& g, int rowNumber,
     int width, int height, bool rowIsSelected)
 {
     if (rowIsSelected)
