@@ -6,7 +6,7 @@ PlayerGUI::PlayerGUI()
     juce::Logger::writeToLog("PlayerGUI constructed: " + juce::String((intptr_t)this));
     // Add buttons
     for (auto* btn : { &loadButton , &muteButton , &PauseButton, &ToStartButton ,
-                       &ToEndButton ,&LoopButton ,&setPointAButton,&setPointBButton,&clearLoopButton,
+                       &ToEndButton ,&LoopButton ,&skipBackwardButton ,&skipForwardButton ,&setPointAButton,&setPointBButton,&clearLoopButton,
                        &toggleABLoopButton, &activeplayerButton })
     {
         btn->setColour(juce::TextButton::buttonColourId, juce::Colour(130 ,115,255));
@@ -115,8 +115,13 @@ void PlayerGUI::paint(juce::Graphics& g)
 
         if (thumbnail && hasAudio && thumbnail->getTotalLength() > 0.0)
         {
-            g.setColour(juce::Colours::lightgrey);
-            thumbnail->drawChannels(g, waveformArea, 0.0, thumbnail->getTotalLength(), 1.0f);
+			auto channels = juce::jmin(1, thumbnail->getNumChannels()); // Salma3  for mono display
+            for (int channel = 0; channel < channels; ++channel)
+            {
+                g.setColour(juce::Colour(160, 160, 175).withAlpha(0.7f));
+                thumbnail->drawChannel(g, waveformArea, 0.0, thumbnail->getTotalLength(),
+                    channel, 1.0f);
+			}
 
             double progress = progressSlider.getValue();
             int pointerX = waveformArea.getX() + (int)(progress * waveformArea.getWidth());
@@ -188,6 +193,8 @@ void PlayerGUI::resized()
     PauseButton.setBounds(300, 190, 80, 30); // Rahma 
     ToStartButton.setBounds(180, 190, 80, 30);
     ToEndButton.setBounds(420, 190, 80, 30);
+	skipBackwardButton.setBounds(250, 190, 80, 30); // Salma bonus
+	skipForwardButton.setBounds(350, 190, 80, 30);
     LoopButton.setBounds(540, 190, 80, 30); // Kenzy
     activeplayerButton.setBounds(250,380,80,30);
 
@@ -243,6 +250,10 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         onToEndButton();
     else if (button == &LoopButton && onLooping)
         onLooping();
+    else if (button == &skipForwardButton && onSkipForward) //Salma bonus
+        onSkipForward();
+    else if (button == &skipBackwardButton && onSkipBackward)
+        onSkipBackward();
     else if (button == &setPointAButton && onSetLoopPointA)
         onSetLoopPointA();
     else if (button == &setPointBButton && onSetLoopPointB)
@@ -251,6 +262,7 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         onClearLoopPoints();
     else if (button == &toggleABLoopButton && onToggleABLoop)
         onToggleABLoop();
+   
 
 }
 void PlayerGUI::updatePauseButtonText(bool isPaused)//Rahma

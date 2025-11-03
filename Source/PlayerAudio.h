@@ -27,6 +27,8 @@ public:
     void ToStart();
     void ToEnd();
     void Loop(); //Kenzy
+	void skipForward(double seconds = 10.0); //Salma bonus
+	void skipBackward(double seconds = 10.0);
     bool isLooped() const { return isLooping; };
     void setspeed(float speed); //Salma2
 
@@ -45,6 +47,7 @@ public:
     double getLoopPointA() const { return loopPointA; }
     double getLoopPointB() const { return loopPointB; }
     juce::AudioThumbnail* getAudioThumbnail() { return audioThumbnail.get(); } //Salma3
+	bool hasAudioLoaded() const { return readerSource != nullptr; } 
 
     std::function<void(double pointA, double pointB, bool active)> onABLoopChanged;
 	

@@ -154,6 +154,33 @@ void PlayerAudio::Loop() //kenzy
 
 }
 
+void PlayerAudio::skipForward(double seconds) //Salma bonus
+{
+    double newPosition = transportSource.getCurrentPosition() + seconds;
+    if (newPosition < transportSource.getLengthInSeconds())
+    {
+        transportSource.setPosition(newPosition);
+    }
+    else
+    {
+        transportSource.setPosition(transportSource.getLengthInSeconds());
+    }
+}
+
+void PlayerAudio::skipBackward(double seconds) //Salma bonus
+{
+    double newPosition = transportSource.getCurrentPosition() - seconds;
+    if (newPosition > 0.0)
+    {
+        transportSource.setPosition(newPosition);
+    }
+    else
+    {
+        transportSource.setPosition(0.0);
+    }
+}
+
+
 void PlayerAudio::setspeed(float speed) //Salma2
 {
     playbackSpeed = juce::jlimit(0.5f, 2.0f, speed);

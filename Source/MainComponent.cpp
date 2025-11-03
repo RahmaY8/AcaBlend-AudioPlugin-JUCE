@@ -20,6 +20,8 @@ MainComponent::MainComponent()
         playerGUI1.onTostartButton = [this] { playerAudio1.ToStart(); };
         playerGUI1.onToEndButton = [this] { playerAudio1.ToEnd(); };
         playerGUI1.onLooping = [this] {playerAudio1.Loop(); playerGUI1.updateLoopButton(playerAudio1.isLooped()); }; //Kenzy
+        playerGUI1.onSkipForward = [this] { playerAudio1.skipForward(10.0); }; //Salma bonus
+        playerGUI1.onSkipBackward = [this] { playerAudio1.skipBackward(10.0); };
         playerGUI1.activePlayer = [this] {playerAudio1.toggleActive();
         playerGUI1.updateActivePlayerButtonText(playerAudio1.isActive()); };
 
@@ -33,7 +35,7 @@ MainComponent::MainComponent()
         playerGUI1.updateProgress(currentPos, totalLength);
         };
 	playerGUI1.onGetAudioThumbnail = [this]() { return playerAudio1.getAudioThumbnail(); };//Salma3
-	playerGUI1.onHasAudioLoaded = [this]() { return loadedFiles1.size() > 0; };//Salma3
+	playerGUI1.onHasAudioLoaded = [this]() { return playerAudio1.hasAudioLoaded(); };//Salma3
 	
 
     playerGUI1.onSetLoopPointA = [this] { playerAudio1.setLoopPointA(); }; //Kenzy3
@@ -70,6 +72,8 @@ MainComponent::MainComponent()
             playerGUI2.onTostartButton = [this] { playerAudio2.ToStart(); };
             playerGUI2.onToEndButton = [this] { playerAudio2.ToEnd(); };
             playerGUI2.onLooping = [this] {playerAudio2.Loop(); playerGUI2.updateLoopButton(playerAudio2.isLooped()); }; //Kenzy
+            playerGUI2.onSkipForward = [this] { playerAudio2.skipForward(10.0); }; //Salma bonus
+            playerGUI2.onSkipBackward = [this] { playerAudio2.skipBackward(10.0); };
             playerGUI2.activePlayer = [this] {playerAudio2.toggleActive();
             playerGUI2.updateActivePlayerButtonText(playerAudio2.isActive()); };
 
@@ -83,7 +87,7 @@ MainComponent::MainComponent()
                 playerGUI2.updateProgress(currentPos, totalLength);
                 };
             playerGUI2.onGetAudioThumbnail = [this]() { return playerAudio2.getAudioThumbnail(); };//Salma3
-            playerGUI2.onHasAudioLoaded = [this]() { return loadedFiles2.size() > 0; };//Salma3
+            playerGUI2.onHasAudioLoaded = [this]() { return playerAudio2.hasAudioLoaded(); };//Salma3
 
 
             playerGUI2.onSetLoopPointA = [this] { playerAudio2.setLoopPointA(); }; //Kenzy3

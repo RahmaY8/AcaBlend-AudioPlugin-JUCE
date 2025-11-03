@@ -40,6 +40,8 @@ public:
 	std::function<void()> onTostartButton;
 	std::function<void()> onToEndButton;
 	std::function<void()> onLooping; //Kenzy
+	std::function<void()> onSkipForward; //Salma bonus
+	std::function<void()> onSkipBackward;
 	void updateLoopButton(bool isLooping);
 	std::function<void(double)> onVolumeChanged;
 	std::function<void(double)> onSpeedChanged; //Salma2
@@ -75,6 +77,8 @@ private:
 	juce::TextButton ToStartButton{ "|<" };
 	juce::TextButton ToEndButton{ ">|" };
 	juce::TextButton LoopButton{ "Loop" }; //Kenzy
+	juce::TextButton skipForwardButton{ "+10s" }; //Salma bonus
+	juce::TextButton skipBackwardButton{ "-10s" };
 	bool isLooping = false;
 	juce::Slider volumeSlider;
 
