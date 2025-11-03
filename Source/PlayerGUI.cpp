@@ -8,7 +8,7 @@ PlayerGUI::PlayerGUI()
     for (auto* btn : { &loadButton , &muteButton , &PauseButton, &ToStartButton ,
                        &ToEndButton ,&LoopButton ,&setPointAButton,&setPointBButton,&clearLoopButton,&toggleABLoopButton })
     {
-        btn->setColour(juce::TextButton::buttonColourId, juce::Colours::slateblue);
+        btn->setColour(juce::TextButton::buttonColourId, juce::Colour(130 ,115,255));
         btn->addListener(this);
         addAndMakeVisible(btn);
     }
@@ -26,8 +26,10 @@ PlayerGUI::PlayerGUI()
     //TrackList
     addAndMakeVisible(tracksLoaded);
     tracksLoaded.setModel(this);
-    tracksLoaded.getHeader().addColumn("Track", 1, 400);   // Track names
+    tracksLoaded.getHeader().addColumn("Track", 1, 200); // Track names
+    tracksLoaded.getHeader().setColour(1, juce::Colour(160, 160, 175));
     tracksLoaded.getHeader().addColumn("Duration", 2, 80);
+    tracksLoaded.getHeader().setColour(2, juce::Colour(160, 160, 175));
 
     //Labels for AB Loop //Kenzy3
     formatLabel.setText("Format: ", juce::dontSendNotification);
@@ -91,13 +93,14 @@ PlayerGUI::~PlayerGUI() {
 
 void PlayerGUI::paint(juce::Graphics& g)
 {
-    g.fillAll(juce::Colours::black);
+    
+    g.fillAll(juce::Colour(25, 25, 40));
     // Draw Waveform //Salma3
     int x = 120;
     int waveformY = x + 180;
     int waveformHeight = 80;
-    juce::Rectangle<int> waveformArea(40, 20, 620, waveformHeight);
-    g.setColour(juce::Colours::darkslateblue);
+    juce::Rectangle<int> waveformArea(40, 20, 610, waveformHeight);
+    g.setColour(juce::Colour(15,15,25));
     g.fillRoundedRectangle(waveformArea.toFloat(), 10.0f);
 
     if (onGetAudioThumbnail && onHasAudioLoaded)
@@ -113,7 +116,7 @@ void PlayerGUI::paint(juce::Graphics& g)
             double progress = progressSlider.getValue();
             int pointerX = waveformArea.getX() + (int)(progress * waveformArea.getWidth());
 
-            g.setColour(juce::Colours::aliceblue);
+            g.setColour(juce::Colour(109,93,255));
             g.drawLine(pointerX, waveformArea.getY(), pointerX, waveformArea.getBottom(), 2.0f);
         }
         else
@@ -125,13 +128,13 @@ void PlayerGUI::paint(juce::Graphics& g)
 
     // Draw metadata table background and border
     int metaX = 360, metaY = 380, metaWidth = 270, metaHeight = 160;
-    g.setColour(juce::Colours::darkslateblue);
+    g.setColour(juce::Colour(40,40,60));
     g.fillRect(metaX, metaY, metaWidth, metaHeight);
-    g.setColour(juce::Colours::white);
+    g.setColour(juce::Colour(160,160,175));
     g.drawRect(metaX, metaY, metaWidth, metaHeight, 1);
 
     // Draw table header
-    g.setColour(juce::Colours::slateblue);
+    g.setColour(juce::Colour(160,160,175));
     g.fillRect(metaX, metaY, metaWidth, 40);
     g.setColour(juce::Colours::black);
     g.drawText("Now Playing", metaX + 10, metaY, metaWidth - 20, 25, juce::Justification::left);
@@ -143,21 +146,30 @@ void PlayerGUI::paint(juce::Graphics& g)
         g.drawLine(metaX, metaY + 40 * i, metaX + metaWidth, metaY + 40 * i, 1);
     }
     // Boarder for buttons
-    g.setColour(juce::Colours::darkslateblue);
+    g.setColour(juce::Colour(50, 50, 70));
     g.fillRoundedRectangle(50, 180, 580, 50, 10.0f);
 
     // Boarder for AB  
-    g.setColour(juce::Colours::darkslateblue);
+    g.setColour(juce::Colour(50, 50, 70));
     g.fillRoundedRectangle(50, 240, 580, 50, 10.0f);
 
     // Boarder for VolumeSlider
-    g.setColour(juce::Colours::darkslateblue);
+    g.setColour(juce::Colour(50, 50, 70));
     g.fillRoundedRectangle(50, 310, 280, 50, 10.0f);
 
     // Boarder for SpeedSlider
-    g.setColour(juce::Colours::darkslateblue);
+    g.setColour(juce::Colour(50, 50, 70));
     g.fillRoundedRectangle(340, 310, 290, 50, 10.0f);
 
+    g.setColour(juce::Colour(50, 50, 70));
+	g.drawRect(getLocalBounds(), 2);
+	progressSlider.setColour(juce::Slider::trackColourId, juce::Colour(130,115,255));// Kenzy2
+    tracksLoaded.setColour(juce::TableListBox::backgroundColourId, juce::Colour(40,40,60));
+    speedSlider.setColour(juce::Slider::trackColourId, juce::Colour(130, 115, 255));
+    volumeSlider.setColour(juce::Slider::trackColourId, juce::Colour(130, 115, 255));
+    speedSlider.setColour(juce::Slider::thumbColourId, juce::Colour(160,160,175));
+    volumeSlider.setColour(juce::Slider::thumbColourId, juce::Colour(160,160,175));
+   
 }
 
 
@@ -166,7 +178,7 @@ void PlayerGUI::resized()
 {
     int y = 20;
     int x = 120;
-    loadButton.setBounds(20, 380, 130, 30);
+    loadButton.setBounds(50, 380, 130, 30);
     muteButton.setBounds(60, 190, 80, 30); // Salma
     PauseButton.setBounds(300, 190, 80, 30); // Rahma 
     ToStartButton.setBounds(180, 190, 80, 30);
@@ -187,13 +199,14 @@ void PlayerGUI::resized()
     speedSlider.setBounds(350, 320, 280, 30); // Salma2
 
 
-    progressSlider.setBounds(40, 120, 620, 20); // Kenzy2
+    progressSlider.setBounds(40, 120, 610, 20); // Kenzy2
     progressLabel.setBounds(40, 145, 50, 20);
 
     int waveformY = x + 180; // Salma3
 
     
-    tracksLoaded.setBounds(20, 420, 330, 120); //Salma3
+    tracksLoaded.setBounds(50, 420, 280, 120); //Salma3
+   
     
 
 
@@ -310,10 +323,10 @@ void PlayerGUI::paintRowBackground(juce::Graphics& g, int rowNumber,
     int width, int height, bool rowIsSelected)
 {
     if (rowIsSelected)
-        g.fillAll(juce::Colours::midnightblue);
+        g.fillAll(juce::Colour(130,115,255));
 
     else if (rowNumber % 2)
-        g.fillAll(juce::Colours::navy.withAlpha(0.1f));
+        g.fillAll(juce::Colour(130,115,225).withAlpha(0.1f));
 }
 void PlayerGUI::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {
@@ -341,7 +354,7 @@ void PlayerGUI::updateABLoopDisplay(double pointA, double pointB, bool active) /
     if (active)
     {
         abLoopStatusLabel.setText("AB Loop: ON", juce::dontSendNotification);
-        abLoopStatusLabel.setColour(juce::Label::textColourId, juce::Colours::green);
+        abLoopStatusLabel.setColour(juce::Label::textColourId, juce::Colour(109,93,255));
         toggleABLoopButton.setButtonText("AB Stop");
     }
     else
