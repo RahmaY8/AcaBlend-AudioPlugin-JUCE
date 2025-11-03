@@ -19,7 +19,6 @@ public:
     
 
 private:
-    int activePlayer = 1;
     PlayerAudio playerAudio1;
     PlayerAudio playerAudio2;
     PlayerGUI playerGUI1;

@@ -6,11 +6,16 @@ PlayerGUI::PlayerGUI()
     juce::Logger::writeToLog("PlayerGUI constructed: " + juce::String((intptr_t)this));
     // Add buttons
     for (auto* btn : { &loadButton , &muteButton , &PauseButton, &ToStartButton ,
-                       &ToEndButton ,&LoopButton ,&setPointAButton,&setPointBButton,&clearLoopButton,&toggleABLoopButton })
+                       &ToEndButton ,&LoopButton ,&setPointAButton,&setPointBButton,&clearLoopButton,
+                       &toggleABLoopButton, &activeplayerButton })
     {
         btn->setColour(juce::TextButton::buttonColourId, juce::Colour(130 ,115,255));
         btn->addListener(this);
         addAndMakeVisible(btn);
+        activeplayerButton.onClick = [this] {
+            if (activePlayer)
+                activePlayer();  // This calls MainComponent
+            };
     }
 
     //Labels for metadata // Rahma2
@@ -184,6 +189,7 @@ void PlayerGUI::resized()
     ToStartButton.setBounds(180, 190, 80, 30);
     ToEndButton.setBounds(420, 190, 80, 30);
     LoopButton.setBounds(540, 190, 80, 30); // Kenzy
+    activeplayerButton.setBounds(250,380,80,30);
 
     setPointAButton.setBounds(60, 250, 60, 30);
     setPointBButton.setBounds(130, 250, 60, 30);
@@ -255,6 +261,10 @@ void PlayerGUI::updatePauseButtonText(bool isPaused)//Rahma
 void PlayerGUI::updateLoopButton(bool isLooping) {
     LoopButton.setButtonText(isLooping ? "Looping" : "Loop");
 }
+
+void PlayerGUI::updateActivePlayerButtonText(bool active) {
+    activeplayerButton.setButtonText(active ? "on" : "off");
+};
 
 juce::String PlayerGUI::formatTime(double seconds) //Kenzy2
 {

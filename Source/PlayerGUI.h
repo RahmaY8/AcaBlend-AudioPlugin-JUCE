@@ -61,9 +61,11 @@ public:
 	void listBoxItemClicked(int row, const juce::MouseEvent& event) ;
 	std::function<void(int trackIndex)> onTrackSelected;//Rahma3
 
+	std::function<void()> activePlayer;	
+	void updateActivePlayerButtonText(bool isactive);
+
 private:
-	//PlayerAudio playerAudio;
-	//GUI elements
+	
 	juce::TextButton loadButton{ "Load Into Playlist" };
 	
 	juce::TextButton muteButton{ "Mute" }; //Salma
@@ -93,6 +95,8 @@ private:
 	juce::Label loopPointBLabel;
 	juce::Label abLoopStatusLabel;
 
+	juce::TextButton activeplayerButton{"off"};
+	
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PlayerGUI)
 

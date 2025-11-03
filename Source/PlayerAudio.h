@@ -17,10 +17,13 @@ public:
     void setPosition(double pos);
     void mute(bool shouldMute);//Salma
     void Pause_Continue();//Rahma
+    //void activePlayerFunction();
     juce::String extractDurationOnly(const juce::File& file);
     juce::String getLastDuration() const { return lastDuration; }
 
     bool isPaused() const { return paused; }
+    void toggleActive() { active = !active; }
+    bool isActive() const { return active; }
     void ToStart();
     void ToEnd();
     void Loop(); //Kenzy
@@ -52,6 +55,7 @@ public:
 
 private:
     bool paused = false;//Rahma
+    bool active = false;
     juce::String lastDuration;
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;

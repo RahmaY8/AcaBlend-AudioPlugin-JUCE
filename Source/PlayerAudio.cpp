@@ -110,7 +110,7 @@ void PlayerAudio::mute(bool shouldMute)//Salma
 }
 void PlayerAudio::Pause_Continue()//Rahma
 {
-    paused = !paused;
+    paused = ! paused;
     if (paused) {
         transportSource.stop();
     }
@@ -118,6 +118,10 @@ void PlayerAudio::Pause_Continue()//Rahma
         transportSource.start();
     }
 }
+//void PlayerAudio::activePlayerFunction()
+//{
+  //  active = ! active;
+//}
 juce::String PlayerAudio::extractDurationOnly(const juce::File& file)
 {
     if (file.existsAsFile())

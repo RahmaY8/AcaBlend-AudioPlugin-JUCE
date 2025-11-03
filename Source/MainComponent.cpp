@@ -20,6 +20,8 @@ MainComponent::MainComponent()
         playerGUI1.onTostartButton = [this] { playerAudio1.ToStart(); };
         playerGUI1.onToEndButton = [this] { playerAudio1.ToEnd(); };
         playerGUI1.onLooping = [this] {playerAudio1.Loop(); playerGUI1.updateLoopButton(playerAudio1.isLooped()); }; //Kenzy
+        playerGUI1.activePlayer = [this] {playerAudio1.toggleActive();
+        playerGUI1.updateActivePlayerButtonText(playerAudio1.isActive()); };
 
     playerGUI1.onProgressChanged = [this](double progress) { //Kenzy2
         double newPosition = progress * playerAudio1.getLengthInSeconds();
@@ -68,6 +70,8 @@ MainComponent::MainComponent()
             playerGUI2.onTostartButton = [this] { playerAudio2.ToStart(); };
             playerGUI2.onToEndButton = [this] { playerAudio2.ToEnd(); };
             playerGUI2.onLooping = [this] {playerAudio2.Loop(); playerGUI2.updateLoopButton(playerAudio2.isLooped()); }; //Kenzy
+            playerGUI2.activePlayer = [this] {playerAudio2.toggleActive();
+            playerGUI2.updateActivePlayerButtonText(playerAudio2.isActive()); };
 
             playerGUI2.onProgressChanged = [this](double progress) { //Kenzy2
                 double newPosition = progress * playerAudio2.getLengthInSeconds();
@@ -139,22 +143,43 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
     playerAudio2.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
-/*void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
-{
-    bufferToFill.clearActiveBufferRegion();
-    playerAudio2.getNextAudioBlock(bufferToFill);
-    playerAudio1.getNextAudioBlock(bufferToFill);
-}*/
 void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
     bufferToFill.clearActiveBufferRegion();
 
-    // Let user select which player outputs via GUI
-    if (activePlayer == 1)
+    bool player1Active = playerAudio1.isActive();
+    bool player2Active = playerAudio2.isActive();
+
+    if (player1Active && player2Active)
+    {
+        juce::AudioBuffer<float> tempBuffer1(bufferToFill.buffer->getNumChannels(), bufferToFill.numSamples);
+        juce::AudioBuffer<float> tempBuffer2(bufferToFill.buffer->getNumChannels(), bufferToFill.numSamples);
+
+        juce::AudioSourceChannelInfo info1(&tempBuffer1, 0, bufferToFill.numSamples);
+        juce::AudioSourceChannelInfo info2(&tempBuffer2, 0, bufferToFill.numSamples);
+
+        playerAudio1.getNextAudioBlock(info1);
+        playerAudio2.getNextAudioBlock(info2);
+        for (int channel = 0; channel < bufferToFill.buffer->getNumChannels(); ++channel)
+        {
+            auto* output = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
+            auto* data1 = tempBuffer1.getReadPointer(channel);
+            auto* data2 = tempBuffer2.getReadPointer(channel);
+
+            for (int sample = 0; sample < bufferToFill.numSamples; ++sample)
+            {
+                output[sample] = data1[sample] + data2[sample];
+            }
+        }
+    }
+    else if (player1Active)
+    { 
         playerAudio1.getNextAudioBlock(bufferToFill);
-    else if (activePlayer == 2)
+    }
+    else if (player2Active)
+    {
         playerAudio2.getNextAudioBlock(bufferToFill);
-    // else: no output (both silent)
+    }
 }
 
 void MainComponent::releaseResources()
