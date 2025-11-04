@@ -15,9 +15,8 @@ public:
     void stop();
     void setGain(float gain);
     void setPosition(double pos);
-    void mute(bool shouldMute);//Salma
-    void Pause_Continue();//Rahma
-    //void activePlayerFunction();
+    void mute(bool shouldMute);
+    void Pause_Continue();
     juce::String extractDurationOnly(const juce::File& file);
     juce::String getLastDuration() const { return lastDuration; }
 
@@ -26,11 +25,11 @@ public:
     bool isActive() const { return active; }
     void ToStart();
     void ToEnd();
-    void Loop(); //Kenzy
-	void skipForward(double seconds = 10.0); //Salma bonus
+    void Loop(); 
+	void skipForward(double seconds = 10.0); 
 	void skipBackward(double seconds = 10.0);
     bool isLooped() const { return isLooping; };
-    void setspeed(float speed); //Salma2
+    void setspeed(float speed); 
 
     std::function<void(const juce::String& title, const juce::String& artist,
         const juce::String& duration, const juce::String& format)> MetadataLoaded;
@@ -39,45 +38,41 @@ public:
     double getCurrentPosition() const { return transportSource.getCurrentPosition(); }
     double getLengthInSeconds() const { return transportSource.getLengthInSeconds(); }
 
-    void setLoopPointA(); //Kenzy3
+    void setLoopPointA(); 
     void setLoopPointB();
     void clearLoopPoints();
     void toggleABLoop();
     bool isABLoopActive() const { return ABLoopActive; }
     double getLoopPointA() const { return loopPointA; }
     double getLoopPointB() const { return loopPointB; }
-    juce::AudioThumbnail* getAudioThumbnail() { return audioThumbnail.get(); } //Salma3
+    juce::AudioThumbnail* getAudioThumbnail() { return audioThumbnail.get(); } 
 	bool hasAudioLoaded() const { return readerSource != nullptr; } 
 
     std::function<void(double pointA, double pointB, bool active)> onABLoopChanged;
 	
 
-
-    //double GetPositin() const;
-    //double GetLength() const;
-
 private:
-    bool paused = false;//Rahma
-    bool active = false;
     juce::String lastDuration;
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;
-    std::unique_ptr<juce::ResamplingAudioSource> resamplingSource; //Salma2
-    bool muted = false; //Salma
+    std::unique_ptr<juce::ResamplingAudioSource> resamplingSource;
+    juce::String formatTime(double sec);
+
+    bool paused = false;
+    bool active = false;
+    bool muted = false;
     float previousGain = 0.5f;
     bool isLooping = false;
     double currentSampleRate = 44100.0;
-    float playbackSpeed = 1.0f; //Salma2
-    juce::String formatTime(double sec);
-    
-
-    double loopPointA = 0.0;  //Kenzy3
+    float playbackSpeed = 1.0f;
+    double loopPointA = 0.0;
     double loopPointB = 0.0;
     bool ABLoopActive = false;
     bool hasPointA = false;
     bool hasPointB = false;
-	juce::AudioFormatManager thumbnailFormatManager; //Salma3
+
+	juce::AudioFormatManager thumbnailFormatManager;
 	juce::AudioThumbnailCache thumbnailCache;
 	std::unique_ptr<juce::AudioThumbnail> audioThumbnail; 
 

@@ -3,7 +3,6 @@
 
 PlayerGUI::PlayerGUI()
 {
-    juce::Logger::writeToLog("PlayerGUI constructed: " + juce::String((intptr_t)this));
     // Add buttons
     for (auto* btn : { &loadButton , &muteButton , &PauseButton, &ToStartButton ,
                        &ToEndButton ,&LoopButton ,&skipBackwardButton ,&skipForwardButton ,&setPointAButton,&setPointBButton,&clearLoopButton,
@@ -14,11 +13,11 @@ PlayerGUI::PlayerGUI()
         addAndMakeVisible(btn);
         activeplayerButton.onClick = [this] {
             if (activePlayer)
-                activePlayer();  // This calls MainComponent
+                activePlayer();  
             };
     }
 
-    //Labels for metadata // Rahma2
+    //Labels for metadata 
     addAndMakeVisible(nowPlayingLabel);
     nowPlayingLabel.setText("Now Playing: ", juce::dontSendNotification);
     addAndMakeVisible(titleLabel);
@@ -33,10 +32,10 @@ PlayerGUI::PlayerGUI()
     tracksLoaded.setModel(this);
     tracksLoaded.getHeader().addColumn("Track", 1, 200); // Track names
     tracksLoaded.getHeader().setColour(1, juce::Colour(160, 160, 175));
-    tracksLoaded.getHeader().addColumn("Duration", 2, 80);
+    tracksLoaded.getHeader().addColumn("Duration", 2, 80); //Duration of tracks
     tracksLoaded.getHeader().setColour(2, juce::Colour(160, 160, 175));
 
-    //Labels for AB Loop //Kenzy3
+    //Labels for AB Loop 
     formatLabel.setText("Format: ", juce::dontSendNotification);
     loopPointALabel.setText("A: --:--", juce::dontSendNotification);
     addAndMakeVisible(loopPointALabel);
@@ -46,61 +45,43 @@ PlayerGUI::PlayerGUI()
     addAndMakeVisible(abLoopStatusLabel);
 
     // Volume slider
-    volumeSlider.setRange(0.0, 1.0, 0.01);
-    volumeSlider.setValue(0.5);
+    volumeSlider.setRange(0.0, 10.0, 1.0);
+    volumeSlider.setValue(5.0);
     volumeSlider.addListener(this);
     addAndMakeVisible(volumeSlider);
+    addAndMakeVisible(VolumeSlider);
+    VolumeSlider.setText("Volume Slider ", juce::dontSendNotification);
 
 
-    // Speed slider //Salma2
+    // Speed slider 
     speedSlider.setRange(0.5, 2.0, 0.1);
     speedSlider.setValue(1.0);
     speedSlider.addListener(this);
     addAndMakeVisible(speedSlider);
+    addAndMakeVisible(SpeedSlider);
+    SpeedSlider.setText("Speed Slider ", juce::dontSendNotification);
 
-    //Progress Slider  //Kenzy2
+    //Progress Slider 
     progressSlider.setRange(0.0, 1.0, 0.001);
     progressSlider.setValue(0.0);
     progressSlider.addListener(this);
     progressSlider.setSliderStyle(juce::Slider::LinearBar);
     progressSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     addAndMakeVisible(progressSlider);
-
     progressLabel.setText("00:00", juce::dontSendNotification);
     addAndMakeVisible(progressLabel);
-
     startTimer(100);
 }
 
-PlayerGUI::~PlayerGUI() {
-    juce::Logger::writeToLog("PlayerGUI destroyed: " + juce::String((intptr_t)this));
-
+PlayerGUI::~PlayerGUI() 
+{
     stopTimer();
-
-    onLoadButton = nullptr;
-    onMuteToggle = nullptr;
-    onPauseButton = nullptr;
-    onTostartButton = nullptr;
-    onToEndButton = nullptr;
-    onLooping = nullptr;
-    onVolumeChanged = nullptr;
-    onSpeedChanged = nullptr;
-    onProgressChanged = nullptr;
-    onProgressUpdate = nullptr;
-
-    progressSlider.removeListener(this);
-    volumeSlider.removeListener(this);
-    speedSlider.removeListener(this);
-
-    juce::Logger::writeToLog("PlayerGUI cleanup completed");
-
 }
 
 void PlayerGUI::paint(juce::Graphics& g)
 {
-    
     g.fillAll(juce::Colour(25, 25, 40));
-    // Draw Waveform //Salma3
+    // Draw Waveform 
     int x = 120;
     int waveformY = x + 180;
     int waveformHeight = 80;
@@ -115,7 +96,7 @@ void PlayerGUI::paint(juce::Graphics& g)
 
         if (thumbnail && hasAudio && thumbnail->getTotalLength() > 0.0)
         {
-			auto channels = juce::jmin(1, thumbnail->getNumChannels()); // Salma3  for mono display
+			auto channels = juce::jmin(1, thumbnail->getNumChannels()); // Mono display
             for (int channel = 0; channel < channels; ++channel)
             {
                 g.setColour(juce::Colour(160, 160, 175).withAlpha(0.7f));
@@ -136,7 +117,7 @@ void PlayerGUI::paint(juce::Graphics& g)
         }
     }
 
-    // Draw metadata table background and border
+    // Draw metadata table background and boarder
     int metaX = 360, metaY = 380, metaWidth = 270, metaHeight = 160;
     g.setColour(juce::Colour(40,40,60));
     g.fillRect(metaX, metaY, metaWidth, metaHeight);
@@ -165,15 +146,15 @@ void PlayerGUI::paint(juce::Graphics& g)
 
     // Boarder for VolumeSlider
     g.setColour(juce::Colour(50, 50, 70));
-    g.fillRoundedRectangle(50, 310, 280, 50, 10.0f);
+    g.fillRoundedRectangle(50, 310, 280, 60, 10.0f);
 
     // Boarder for SpeedSlider
     g.setColour(juce::Colour(50, 50, 70));
-    g.fillRoundedRectangle(340, 310, 290, 50, 10.0f);
+    g.fillRoundedRectangle(340, 310, 290, 60, 10.0f);
 
     g.setColour(juce::Colour(50, 50, 70));
 	g.drawRect(getLocalBounds(), 2);
-	progressSlider.setColour(juce::Slider::trackColourId, juce::Colour(130,115,255));// Kenzy2
+	progressSlider.setColour(juce::Slider::trackColourId, juce::Colour(130,115,255));
     tracksLoaded.setColour(juce::TableListBox::backgroundColourId, juce::Colour(40,40,60));
     speedSlider.setColour(juce::Slider::trackColourId, juce::Colour(130, 115, 255));
     volumeSlider.setColour(juce::Slider::trackColourId, juce::Colour(130, 115, 255));
@@ -182,21 +163,19 @@ void PlayerGUI::paint(juce::Graphics& g)
    
 }
 
-
-
 void PlayerGUI::resized()
 {
     int y = 20;
     int x = 120;
     loadButton.setBounds(50, 380, 130, 30);
-    muteButton.setBounds(60, 190, 80, 30); // Salma
-    PauseButton.setBounds(300, 190, 80, 30); // Rahma 
-    ToStartButton.setBounds(180, 190, 80, 30);
-    ToEndButton.setBounds(420, 190, 80, 30);
-	skipBackwardButton.setBounds(250, 190, 80, 30); // Salma bonus
-	skipForwardButton.setBounds(350, 190, 80, 30);
-    LoopButton.setBounds(540, 190, 80, 30); // Kenzy
-    activeplayerButton.setBounds(250,380,80,30);
+    muteButton.setBounds(60, 190, 60, 30); 
+    PauseButton.setBounds(300, 190, 60, 30);  
+    ToStartButton.setBounds(140, 190, 60, 30);
+    ToEndButton.setBounds(460, 190, 60, 30);
+	skipBackwardButton.setBounds(220, 190, 60, 30); 
+	skipForwardButton.setBounds(380, 190, 60, 30);
+    LoopButton.setBounds(540, 190, 60, 30); 
+    activeplayerButton.setBounds(240,380,90,30);
 
     setPointAButton.setBounds(60, 250, 60, 30);
     setPointBButton.setBounds(130, 250, 60, 30);
@@ -208,41 +187,38 @@ void PlayerGUI::resized()
     abLoopStatusLabel.setBounds(520, 250, 100, 30);
 
 
-    volumeSlider.setBounds(60, 320, 270, 30);
-    speedSlider.setBounds(350, 320, 280, 30); // Salma2
+    volumeSlider.setBounds(60, 330, 270, 30);
+    speedSlider.setBounds(350, 330, 280, 30); 
+    VolumeSlider.setBounds(55,305,270,30);
+    SpeedSlider.setBounds(345, 305, 270, 30);
 
 
-    progressSlider.setBounds(40, 120, 610, 20); // Kenzy2
+    progressSlider.setBounds(40, 120, 610, 20); 
     progressLabel.setBounds(40, 145, 50, 20);
-
-    int waveformY = x + 180; // Salma3
-
-    
-    tracksLoaded.setBounds(50, 420, 280, 120); //Salma3
    
-    
+    int waveformY = x + 180;
 
-
+    tracksLoaded.setBounds(50, 420, 280, 120); 
+   
     int metaX = 360, metaY = 380, metaWidth = 310;
 
-    
     titleLabel.setBounds(metaX + 10, metaY + 40, metaWidth - 20, 25);
     artistLabel.setBounds(metaX + 10, metaY + 80, metaWidth - 20, 25);
     formatLabel.setBounds(metaX + 10, metaY + 120, metaWidth - 20, 25);
-
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button)
 {
+    //Button Event Handler
     if (button == &loadButton && onLoadButton)
         onLoadButton();
-    else if (button == &muteButton && onMuteToggle)//Salma
+    else if (button == &muteButton && onMuteToggle)
     {
         isMuted = !isMuted;
         muteButton.setButtonText(isMuted ? "Unmute" : "Mute");
         onMuteToggle(isMuted);
     }
-    else if (button == &PauseButton && onPauseButton)//Rahma
+    else if (button == &PauseButton && onPauseButton)
         onPauseButton();
     else if (button == &ToStartButton && onTostartButton)
         onTostartButton();
@@ -250,7 +226,7 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         onToEndButton();
     else if (button == &LoopButton && onLooping)
         onLooping();
-    else if (button == &skipForwardButton && onSkipForward) //Salma bonus
+    else if (button == &skipForwardButton && onSkipForward)
         onSkipForward();
     else if (button == &skipBackwardButton && onSkipBackward)
         onSkipBackward();
@@ -265,9 +241,9 @@ void PlayerGUI::buttonClicked(juce::Button* button)
    
 
 }
-void PlayerGUI::updatePauseButtonText(bool isPaused)//Rahma
+void PlayerGUI::updatePauseButtonText(bool isPaused)
 {
-    PauseButton.setButtonText(isPaused ? "continue" : "||");
+    PauseButton.setButtonText(isPaused ? "play" : "||");
 }
 
 void PlayerGUI::updateLoopButton(bool isLooping) {
@@ -275,10 +251,10 @@ void PlayerGUI::updateLoopButton(bool isLooping) {
 }
 
 void PlayerGUI::updateActivePlayerButtonText(bool active) {
-    activeplayerButton.setButtonText(active ? "On" : "Off");
+    activeplayerButton.setButtonText(active ? "Player is ON" : "Player is OFF");
 };
 
-juce::String PlayerGUI::formatTime(double seconds) //Kenzy2
+juce::String PlayerGUI::formatTime(double seconds)
 {
     int minutes = (int)(seconds / 60);
     int secs = (int)seconds % 60;
@@ -301,21 +277,21 @@ void PlayerGUI::timerCallback()
 {
     if (onProgressUpdate)
         onProgressUpdate();
-    repaint(); // To update the waveform display //Salma3
+    repaint(); // To update the waveform display 
 }
 
 void PlayerGUI::sliderValueChanged(juce::Slider* slider)
 {
     if (slider == &volumeSlider)
-        // transportSource.setGain((float)slider->getValue());
+        
         onVolumeChanged(slider->getValue());
-    else if (slider == &speedSlider) //Salma2
+    else if (slider == &speedSlider) 
         onSpeedChanged(slider->getValue());
-    else if (slider == &progressSlider) // Kenzy2
+    else if (slider == &progressSlider)
         onProgressChanged(slider->getValue());
 }
 
-void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& artist,//Rahma2
+void PlayerGUI::updateMetaData(const juce::String& title, const juce::String& artist,
     const juce::String& duration, const juce::String& format)
 {
     titleLabel.setText("Title: " + title, juce::dontSendNotification);
@@ -357,7 +333,7 @@ void PlayerGUI::paintCell(juce::Graphics& g, int rowNumber, int columnId, int wi
     if (columnId == 1) // Track name column
         g.drawText(tracknames[rowNumber], 10, 0, width - 10, height, juce::Justification::left);
     else if (columnId == 2) // Duration column  
-        g.drawText(durations[rowNumber], 0, 0, width, height, juce::Justification::centred);// Temporary
+        g.drawText(durations[rowNumber], 0, 0, width, height, juce::Justification::centred);
 
 }
 void PlayerGUI::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
@@ -368,7 +344,7 @@ void PlayerGUI::cellClicked(int rowNumber, int columnId, const juce::MouseEvent&
 
 
 
-void PlayerGUI::updateABLoopDisplay(double pointA, double pointB, bool active) //Kenzy3
+void PlayerGUI::updateABLoopDisplay(double pointA, double pointB, bool active) 
 {
     loopPointALabel.setText("A: " + formatTime(pointA), juce::dontSendNotification);
     loopPointBLabel.setText("B: " + formatTime(pointB), juce::dontSendNotification);

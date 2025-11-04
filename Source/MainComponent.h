@@ -23,11 +23,8 @@ private:
     PlayerAudio playerAudio2;
     PlayerGUI playerGUI1;
     PlayerGUI playerGUI2;
-   // juce::Component player1;
-    //juce::Component player2;
-    //void loadTrack(const juce::File& file);
     std::unique_ptr<juce::FileChooser> fileChooser;
-    juce::Array<juce::File> loadedFiles1;//Rahma3
+    juce::Array<juce::File> loadedFiles1;
     juce::Array<juce::File> loadedFiles2;
     juce::TextButton masterStartButton{ "Master Play" };
     juce::TextButton masterStopButton{ "Master Pause" };

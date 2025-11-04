@@ -2,30 +2,28 @@
 
 MainComponent::MainComponent()
 {
-
-    //DBG("MainComponent constructed");
     addAndMakeVisible(playerGUI1);
     addAndMakeVisible(playerGUI2);
 
         // Connect GUI callbacks
         playerGUI1.onLoadButton = [this] { loadAudioFile(1); };
         playerGUI1.onVolumeChanged = [this](double volume) { playerAudio1.setGain((float)volume); };
-        playerGUI1.onSpeedChanged = [this](double speed) { playerAudio1.setspeed((float)speed); };//Salma2
-        playerGUI1.onMuteToggle = [this](bool isMuted) { playerAudio1.mute(isMuted);//Salma
+        playerGUI1.onSpeedChanged = [this](double speed) { playerAudio1.setspeed((float)speed); };
+        playerGUI1.onMuteToggle = [this](bool isMuted) { playerAudio1.mute(isMuted);
         if (isMuted) playerGUI1.setVolumeSlider(0.0);
         else playerGUI1.setVolumeSlider(0.5); };
 
-        playerGUI1.onPauseButton = [this] {playerAudio1.Pause_Continue(); //Rahma
+        playerGUI1.onPauseButton = [this] {playerAudio1.Pause_Continue(); 
         playerGUI1.updatePauseButtonText(playerAudio1.isPaused()); };
         playerGUI1.onTostartButton = [this] { playerAudio1.ToStart(); };
         playerGUI1.onToEndButton = [this] { playerAudio1.ToEnd(); };
-        playerGUI1.onLooping = [this] {playerAudio1.Loop(); playerGUI1.updateLoopButton(playerAudio1.isLooped()); }; //Kenzy
-        playerGUI1.onSkipForward = [this] { playerAudio1.skipForward(10.0); }; //Salma bonus
+        playerGUI1.onLooping = [this] {playerAudio1.Loop(); playerGUI1.updateLoopButton(playerAudio1.isLooped()); }; 
+        playerGUI1.onSkipForward = [this] { playerAudio1.skipForward(10.0); }; 
         playerGUI1.onSkipBackward = [this] { playerAudio1.skipBackward(10.0); };
         playerGUI1.activePlayer = [this] {playerAudio1.toggleActive();
         playerGUI1.updateActivePlayerButtonText(playerAudio1.isActive()); };
 
-    playerGUI1.onProgressChanged = [this](double progress) { //Kenzy2
+    playerGUI1.onProgressChanged = [this](double progress) { 
         double newPosition = progress * playerAudio1.getLengthInSeconds();
         playerAudio1.setPosition(newPosition);
         };
@@ -34,11 +32,11 @@ MainComponent::MainComponent()
         double totalLength = playerAudio1.getLengthInSeconds();
         playerGUI1.updateProgress(currentPos, totalLength);
         };
-	playerGUI1.onGetAudioThumbnail = [this]() { return playerAudio1.getAudioThumbnail(); };//Salma3
-	playerGUI1.onHasAudioLoaded = [this]() { return playerAudio1.hasAudioLoaded(); };//Salma3
+	playerGUI1.onGetAudioThumbnail = [this]() { return playerAudio1.getAudioThumbnail(); };
+	playerGUI1.onHasAudioLoaded = [this]() { return playerAudio1.hasAudioLoaded(); };
 	
 
-    playerGUI1.onSetLoopPointA = [this] { playerAudio1.setLoopPointA(); }; //Kenzy3
+    playerGUI1.onSetLoopPointA = [this] { playerAudio1.setLoopPointA(); }; 
     playerGUI1.onSetLoopPointB = [this] { playerAudio1.setLoopPointB(); };
     playerGUI1.onClearLoopPoints = [this] { playerAudio1.clearLoopPoints(); };
     playerGUI1.onToggleABLoop = [this] { playerAudio1.toggleABLoop(); };
@@ -47,12 +45,12 @@ MainComponent::MainComponent()
         playerGUI1.updateABLoopDisplay(pointA, pointB, active);
         };
 
-    playerAudio1.MetadataLoaded = [this](const juce::String& title, const juce::String& artist, //Rahma2
+    playerAudio1.MetadataLoaded = [this](const juce::String& title, const juce::String& artist, 
         const juce::String& duration, const juce::String& format) {
             playerGUI1.updateMetaData(title, artist, duration, format);
         };
 
-        playerGUI1.onTrackSelected = [this](int trackindx) {//Rahma3
+        playerGUI1.onTrackSelected = [this](int trackindx) {
             if (trackindx < loadedFiles1.size())
             {
                 playerAudio1.LoadFile(loadedFiles1[trackindx], true);
@@ -63,21 +61,21 @@ MainComponent::MainComponent()
 
             playerGUI2.onLoadButton = [this] { loadAudioFile(2); };
             playerGUI2.onVolumeChanged = [this](double volume) { playerAudio2.setGain((float)volume); };
-            playerGUI2.onSpeedChanged = [this](double speed) { playerAudio2.setspeed((float)speed); };//Salma2
-            playerGUI2.onMuteToggle = [this](bool isMuted) { playerAudio2.mute(isMuted);//Salma
+            playerGUI2.onSpeedChanged = [this](double speed) { playerAudio2.setspeed((float)speed); };
+            playerGUI2.onMuteToggle = [this](bool isMuted) { playerAudio2.mute(isMuted);
             if (isMuted) playerGUI2.setVolumeSlider(0.0);
             else playerGUI2.setVolumeSlider(0.5); };
-            playerGUI2.onPauseButton = [this] {playerAudio2.Pause_Continue(); //Rahma
+            playerGUI2.onPauseButton = [this] {playerAudio2.Pause_Continue(); 
             playerGUI2.updatePauseButtonText(playerAudio2.isPaused()); };
             playerGUI2.onTostartButton = [this] { playerAudio2.ToStart(); };
             playerGUI2.onToEndButton = [this] { playerAudio2.ToEnd(); };
-            playerGUI2.onLooping = [this] {playerAudio2.Loop(); playerGUI2.updateLoopButton(playerAudio2.isLooped()); }; //Kenzy
-            playerGUI2.onSkipForward = [this] { playerAudio2.skipForward(10.0); }; //Salma bonus
+            playerGUI2.onLooping = [this] {playerAudio2.Loop(); playerGUI2.updateLoopButton(playerAudio2.isLooped()); }; 
+            playerGUI2.onSkipForward = [this] { playerAudio2.skipForward(10.0); }; 
             playerGUI2.onSkipBackward = [this] { playerAudio2.skipBackward(10.0); };
             playerGUI2.activePlayer = [this] {playerAudio2.toggleActive();
             playerGUI2.updateActivePlayerButtonText(playerAudio2.isActive()); };
 
-            playerGUI2.onProgressChanged = [this](double progress) { //Kenzy2
+            playerGUI2.onProgressChanged = [this](double progress) { 
                 double newPosition = progress * playerAudio2.getLengthInSeconds();
                 playerAudio2.setPosition(newPosition);
                 };
@@ -86,11 +84,11 @@ MainComponent::MainComponent()
                 double totalLength = playerAudio2.getLengthInSeconds();
                 playerGUI2.updateProgress(currentPos, totalLength);
                 };
-            playerGUI2.onGetAudioThumbnail = [this]() { return playerAudio2.getAudioThumbnail(); };//Salma3
-            playerGUI2.onHasAudioLoaded = [this]() { return playerAudio2.hasAudioLoaded(); };//Salma3
+            playerGUI2.onGetAudioThumbnail = [this]() { return playerAudio2.getAudioThumbnail(); };
+            playerGUI2.onHasAudioLoaded = [this]() { return playerAudio2.hasAudioLoaded(); };
 
 
-            playerGUI2.onSetLoopPointA = [this] { playerAudio2.setLoopPointA(); }; //Kenzy3
+            playerGUI2.onSetLoopPointA = [this] { playerAudio2.setLoopPointA(); }; 
             playerGUI2.onSetLoopPointB = [this] { playerAudio2.setLoopPointB(); };
             playerGUI2.onClearLoopPoints = [this] { playerAudio2.clearLoopPoints(); };
             playerGUI2.onToggleABLoop = [this] { playerAudio2.toggleABLoop(); };
@@ -99,12 +97,12 @@ MainComponent::MainComponent()
                 playerGUI2.updateABLoopDisplay(pointA, pointB, active);
                 };
 
-            playerAudio2.MetadataLoaded = [this](const juce::String& title, const juce::String& artist, //Rahma2
+            playerAudio2.MetadataLoaded = [this](const juce::String& title, const juce::String& artist, 
                 const juce::String& duration, const juce::String& format) {
                     playerGUI2.updateMetaData(title, artist, duration, format);
                 };
 
-            playerGUI2.onTrackSelected = [this](int trackindx) {//Rahma3
+            playerGUI2.onTrackSelected = [this](int trackindx) {
                 if (trackindx < loadedFiles2.size())
                 {
                     playerAudio2.LoadFile(loadedFiles2[trackindx], true);
@@ -134,27 +132,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
-    /*DBG("MainComponent destruction started");
-
-    playerGUI.stopTimer();
-
-    playerGUI.onLoadButton = nullptr;
-    playerGUI.onVolumeChanged = nullptr;
-    playerGUI.onSpeedChanged = nullptr;
-    playerGUI.onMuteToggle = nullptr;
-    playerGUI.onPauseButton = nullptr;
-    playerGUI.onTostartButton = nullptr;
-    playerGUI.onToEndButton = nullptr;
-    playerGUI.onLooping = nullptr;
-    playerGUI.onProgressChanged = nullptr;
-    playerGUI.onProgressUpdate = nullptr;
-
-    playerAudio1.stop();
-    playerAudio2.stop();*/
-
     shutdownAudio();
-
-   // DBG("MainComponent destruction completed");
 }
 
 void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
@@ -217,7 +195,7 @@ void MainComponent::resized()
     // Master button at the top center
     auto masterButtonArea = area.removeFromTop(40).withTrimmedTop(5);
     masterStartButton.setBounds(50, 550, 100, 30);
-    masterStopButton.setBounds(750, 550, 100, 30);
+    masterStopButton.setBounds(getWidth()/2+50, 550, 100, 30);
 
 }
 
@@ -251,10 +229,7 @@ void MainComponent::loadAudioFile(int playernumber)
                         durations.add(playerAudio2.getLastDuration());
                         loadedFiles2.add(file);
                     }
-   
                     tracknames.add(file.getFileName());  // Add to display list
-                    
-                    
                 }
             }
             if(playernumber == 1)

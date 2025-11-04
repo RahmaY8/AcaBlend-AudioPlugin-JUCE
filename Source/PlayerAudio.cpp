@@ -1,21 +1,15 @@
 #include "PlayerAudio.h"
 
-PlayerAudio::PlayerAudio() : transportSource() , thumbnailCache(5) //Salma3
-
+PlayerAudio::PlayerAudio() : transportSource() , thumbnailCache(5) 
 {
     formatManager.registerBasicFormats();
-	thumbnailFormatManager.registerBasicFormats(); //Salma3
+	thumbnailFormatManager.registerBasicFormats();
 	audioThumbnail = std::make_unique<juce::AudioThumbnail>(512, thumbnailFormatManager, thumbnailCache);
-    // wrap the transport source in a resampling source to allow speed changes //Salma2
     resamplingSource = std::make_unique<juce::ResamplingAudioSource>(&transportSource, false, 2);
-    juce::Logger::writeToLog("PlayerAudio constructed: " + juce::String((intptr_t)this));
-
 }
 
 PlayerAudio::~PlayerAudio()
 {
-    juce::Logger::writeToLog("PlayerAudio destroyed: " + juce::String((intptr_t)this));
-
     transportSource.stop();
 
     if (resamplingSource != nullptr)
@@ -34,10 +28,7 @@ PlayerAudio::~PlayerAudio()
 void PlayerAudio::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
-    resamplingSource->prepareToPlay(samplesPerBlockExpected, sampleRate);//Salma2
-
-    
-
+    resamplingSource->prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
@@ -48,17 +39,15 @@ void PlayerAudio::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferTo
         return;
     }
 
-    resamplingSource->getNextAudioBlock(bufferToFill); //Salma2
+    resamplingSource->getNextAudioBlock(bufferToFill); 
     
-
-
     if (isLooping && transportSource.hasStreamFinished())
     {
         transportSource.setPosition(0.0);
         transportSource.start();
     }
 
-    if (ABLoopActive && transportSource.getCurrentPosition() >= loopPointB) //Kenzy3
+    if (ABLoopActive && transportSource.getCurrentPosition() >= loopPointB) 
     {
         transportSource.setPosition(loopPointA);
     }
@@ -69,10 +58,8 @@ void PlayerAudio::releaseResources()
     juce::Logger::writeToLog("PlayerAudio releasing resources: " + juce::String((intptr_t)this));
     transportSource.releaseResources();
     if (resamplingSource != nullptr)
-        resamplingSource->releaseResources(); //salma2
+        resamplingSource->releaseResources(); 
 }
-
-
 
 void PlayerAudio::start()
 {
@@ -94,7 +81,7 @@ void PlayerAudio::setPosition(double pos)
     transportSource.setPosition(pos);
 }
 
-void PlayerAudio::mute(bool shouldMute)//Salma
+void PlayerAudio::mute(bool shouldMute)
 {
     if (shouldMute)
     {
@@ -108,7 +95,7 @@ void PlayerAudio::mute(bool shouldMute)//Salma
         muted = false;
     }
 }
-void PlayerAudio::Pause_Continue()//Rahma
+void PlayerAudio::Pause_Continue()
 {
     paused = ! paused;
     if (paused) {
@@ -118,10 +105,7 @@ void PlayerAudio::Pause_Continue()//Rahma
         transportSource.start();
     }
 }
-//void PlayerAudio::activePlayerFunction()
-//{
-  //  active = ! active;
-//}
+
 juce::String PlayerAudio::extractDurationOnly(const juce::File& file)
 {
     if (file.existsAsFile())
@@ -147,14 +131,13 @@ void PlayerAudio::ToEnd()
     }
 }
 
-void PlayerAudio::Loop() //kenzy
+void PlayerAudio::Loop() 
 {
     isLooping = !isLooping;
     transportSource.setLooping(isLooping);
-
 }
 
-void PlayerAudio::skipForward(double seconds) //Salma bonus
+void PlayerAudio::skipForward(double seconds)
 {
     double newPosition = transportSource.getCurrentPosition() + seconds;
     if (newPosition < transportSource.getLengthInSeconds())
@@ -167,7 +150,7 @@ void PlayerAudio::skipForward(double seconds) //Salma bonus
     }
 }
 
-void PlayerAudio::skipBackward(double seconds) //Salma bonus
+void PlayerAudio::skipBackward(double seconds)
 {
     double newPosition = transportSource.getCurrentPosition() - seconds;
     if (newPosition > 0.0)
@@ -181,7 +164,7 @@ void PlayerAudio::skipBackward(double seconds) //Salma bonus
 }
 
 
-void PlayerAudio::setspeed(float speed) //Salma2
+void PlayerAudio::setspeed(float speed)
 {
     playbackSpeed = juce::jlimit(0.5f, 2.0f, speed);
     resamplingSource->setResamplingRatio(playbackSpeed);
@@ -205,7 +188,7 @@ bool PlayerAudio::LoadFile(const juce::File& file, bool shouldUpdateMetadata )
             readerSource->setLooping(isLooping);
 
             transportSource.setSource(readerSource.get(), 0, nullptr, currentSampleRate);
-            resamplingSource->setResamplingRatio(playbackSpeed);//Salma2
+            resamplingSource->setResamplingRatio(playbackSpeed);
 
             //Extract MetaData
             juce::String format = file.getFileExtension().toUpperCase();
@@ -215,9 +198,11 @@ bool PlayerAudio::LoadFile(const juce::File& file, bool shouldUpdateMetadata )
             juce::String duration = formatTime(Duration);
 
             if (shouldUpdateMetadata && MetadataLoaded)
+            {
                 MetadataLoaded(title, artist, duration, format);
-			audioThumbnail->clear(); //Salma3
-            audioThumbnail->setSource(new juce::FileInputSource(file)); 
+                audioThumbnail->clear();
+                audioThumbnail->setSource(new juce::FileInputSource(file));
+            }
            lastDuration = duration;
 
             return true;
@@ -227,7 +212,7 @@ bool PlayerAudio::LoadFile(const juce::File& file, bool shouldUpdateMetadata )
     return false;
 }
 
-juce::String PlayerAudio::formatTime(double seconds) //Kenzy3
+juce::String PlayerAudio::formatTime(double seconds)
 {
     int minutes = (int)(seconds / 60);
     int secs = (int)seconds % 60;
@@ -235,7 +220,7 @@ juce::String PlayerAudio::formatTime(double seconds) //Kenzy3
 }
 
 
-void PlayerAudio::setLoopPointA()  //Kenzy3
+void PlayerAudio::setLoopPointA()
 {
     loopPointA = transportSource.getCurrentPosition();
     hasPointA = true;
@@ -245,8 +230,6 @@ void PlayerAudio::setLoopPointA()  //Kenzy3
         ABLoopActive = true;
         transportSource.setLooping(true);
     }
-
-
     if (onABLoopChanged)
         onABLoopChanged(loopPointA, loopPointB, ABLoopActive);
 }
@@ -255,7 +238,6 @@ void PlayerAudio::setLoopPointB()
 {
     loopPointB = transportSource.getCurrentPosition();
     hasPointB = true;
-
 
     if (hasPointA && loopPointB <= loopPointA)
     {

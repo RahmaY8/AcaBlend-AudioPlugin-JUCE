@@ -9,7 +9,7 @@ struct PlayerGUILeakDetector { JUCE_DECLARE_NON_COPYABLE(PlayerGUILeakDetector) 
 class SimpleAudioPlayer : public juce::JUCEApplication
 {
 public:
-    const juce::String getApplicationName() override { return "Simple Audio Player"; }
+    const juce::String getApplicationName() override { return "AcaBlend"; }
     const juce::String getApplicationVersion() override { return "1.1"; }
 
     void initialise(const juce::String&) override
