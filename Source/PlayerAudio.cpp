@@ -173,6 +173,7 @@ void PlayerAudio::setspeed(float speed)
 }
 bool PlayerAudio::LoadFile(const juce::File& file, bool shouldUpdateMetadata )
 {
+    currentFilePath = file.getFullPathName();
     transportSource.stop();          
     paused = false;
     if (file.existsAsFile())
@@ -210,6 +211,12 @@ bool PlayerAudio::LoadFile(const juce::File& file, bool shouldUpdateMetadata )
     }
     lastDuration = "00:00";
     return false;
+}
+
+//Task14
+void PlayerAudio::addMarker(double time)
+{
+    markerTimes.add(time);
 }
 
 juce::String PlayerAudio::formatTime(double seconds)

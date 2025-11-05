@@ -1,4 +1,4 @@
-#include "PlayerGUI.h"
+﻿#include "PlayerGUI.h"
 
 
 PlayerGUI::PlayerGUI()
@@ -6,7 +6,7 @@ PlayerGUI::PlayerGUI()
     // Add buttons
     for (auto* btn : { &loadButton , &muteButton , &PauseButton, &ToStartButton ,
                        &ToEndButton ,&LoopButton ,&skipBackwardButton ,&skipForwardButton ,&setPointAButton,&setPointBButton,&clearLoopButton,
-                       &toggleABLoopButton, &activeplayerButton })
+                       &toggleABLoopButton, &activeplayerButton, &addMarkerButton, &removeMarkerButton })
     {
         btn->setColour(juce::TextButton::buttonColourId, juce::Colour(130 ,115,255));
         btn->addListener(this);
@@ -16,6 +16,10 @@ PlayerGUI::PlayerGUI()
                 activePlayer();  
             };
     }
+
+    addAndMakeVisible(markersTable);
+    markersTable.setModel(this);
+    markersTable.getHeader().addColumn("Markers", 4, 200);
 
     //Labels for metadata 
     addAndMakeVisible(nowPlayingLabel);
@@ -115,6 +119,21 @@ void PlayerGUI::paint(juce::Graphics& g)
             g.setColour(juce::Colours::white);
             g.drawText("No audio loaded", waveformArea, juce::Justification::centred);
         }
+        //Markers
+        g.setColour(juce::Colour(130, 115, 255));
+        for (auto time : markerTimes)
+        {
+            if (onGetAudioThumbnail)
+            {
+                auto* thumbnail = onGetAudioThumbnail();
+                if (thumbnail && thumbnail->getTotalLength() > 0.0)
+                {
+                    double progress = time / thumbnail->getTotalLength();
+                    int markerX = waveformArea.getX() + (int)(progress * waveformArea.getWidth());
+                    g.fillEllipse(markerX - 3, waveformArea.getBottom() - 8, 6, 6);
+                }
+            }
+        }
     }
 
     // Draw metadata table background and boarder
@@ -205,6 +224,12 @@ void PlayerGUI::resized()
     titleLabel.setBounds(metaX + 10, metaY + 40, metaWidth - 20, 25);
     artistLabel.setBounds(metaX + 10, metaY + 80, metaWidth - 20, 25);
     formatLabel.setBounds(metaX + 10, metaY + 120, metaWidth - 20, 25);
+
+    //Task 14
+    // Marker controls
+    addMarkerButton.setBounds(50, 550, 100, 30);
+    removeMarkerButton.setBounds(160, 550, 100, 30);
+    markersTable.setBounds(50, 590, 280, 100);
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button)
@@ -238,6 +263,10 @@ void PlayerGUI::buttonClicked(juce::Button* button)
         onClearLoopPoints();
     else if (button == &toggleABLoopButton && onToggleABLoop)
         onToggleABLoop();
+    else if (button == &addMarkerButton && onAddMarker)
+        onAddMarker();
+    else if (button == &removeMarkerButton && onRemoveMarker)
+        onRemoveMarker();
    
 
 }
@@ -315,7 +344,7 @@ void PlayerGUI::listBoxItemClicked(int row, const juce::MouseEvent& event)
 }
 int PlayerGUI::getNumRows()
 {
-    return tracknames.size();
+    return std::max(tracknames.size(), markerNames.size());
 }
 void PlayerGUI::paintRowBackground(juce::Graphics& g, int rowNumber,
     int width, int height, bool rowIsSelected)
@@ -326,20 +355,37 @@ void PlayerGUI::paintRowBackground(juce::Graphics& g, int rowNumber,
     else if (rowNumber % 2)
         g.fillAll(juce::Colour(130,115,225).withAlpha(0.1f));
 }
-void PlayerGUI::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void PlayerGUI::paintCell(juce::Graphics& g, int rowNumber, int columnId,
+    int width, int height, bool rowIsSelected)
 {
     g.setColour(juce::Colours::white);
 
-    if (columnId == 1) // Track name column
-        g.drawText(tracknames[rowNumber], 10, 0, width - 10, height, juce::Justification::left);
-    else if (columnId == 2) // Duration column  
-        g.drawText(durations[rowNumber], 0, 0, width, height, juce::Justification::centred);
-
+    if (columnId == 1 || columnId == 2) // Tracks table 
+    {
+        if (columnId == 1 && rowNumber < tracknames.size())
+            g.drawText(tracknames[rowNumber], 10, 0, width - 10, height, juce::Justification::left);
+        else if (columnId == 2 && rowNumber < durations.size())
+            g.drawText(durations[rowNumber], 0, 0, width, height, juce::Justification::centred);
+    }
+    else if (columnId == 4) // Markers table 
+    {
+        if (rowNumber < markerNames.size())
+            g.drawText(markerNames[rowNumber], 10, 0, width - 10, height, juce::Justification::left);
+    }
 }
 void PlayerGUI::cellClicked(int rowNumber, int columnId, const juce::MouseEvent& event)
 {
-    if (onTrackSelected && rowNumber < tracknames.size())
-        onTrackSelected(rowNumber);
+    if (columnId == 1 || columnId == 2) 
+    {
+        if (onTrackSelected && rowNumber < tracknames.size())
+            onTrackSelected(rowNumber);
+    }
+    else if (columnId == 4) 
+    {
+        if (onMarkerSelected && rowNumber < markerTimes.size())
+            onMarkerSelected(markerTimes[rowNumber]);  
+    }
+
 }
 
 

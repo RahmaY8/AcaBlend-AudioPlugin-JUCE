@@ -54,6 +54,9 @@ public:
 	void updateABLoopDisplay(double pointA, double pointB, bool active);
 	std::function<juce::AudioThumbnail* ()> onGetAudioThumbnail; 
 	std::function<bool()> onHasAudioLoaded; 
+	std::function<void()> onAddMarker;
+	std::function<void()> onRemoveMarker;
+	std::function<void(double markerTime)> onMarkerSelected;
 
 	juce::TableListBox tracksLoaded;
 	juce::StringArray tracknames;
@@ -64,11 +67,17 @@ public:
 
 	std::function<void()> activePlayer;	
 	void updateActivePlayerButtonText(bool isactive);
-
+	juce::String formatTime(double seconds);
+	//Task 14
+	// Marker controls
+	juce::TableListBox markersTable;
+	juce::StringArray markerNames; 
+	juce::Array<double> markerTimes;
 private:
+	juce::TextButton addMarkerButton{ "Add Marker" };
+	juce::TextButton removeMarkerButton{ "Remove Marker" };
 	
 	juce::TextButton loadButton{ "Load Into Playlist" };
-	
 	juce::TextButton muteButton{ "Mute" };
 	bool isMuted = false;
 	double previousVolume = 0.5;
@@ -84,7 +93,6 @@ private:
 	juce::Slider speedSlider;
 	juce::Slider progressSlider; 
 	juce::Label progressLabel;
-	juce::String formatTime(double seconds);
 	void timerCallback() override;
 
 	juce::Label nowPlayingLabel;

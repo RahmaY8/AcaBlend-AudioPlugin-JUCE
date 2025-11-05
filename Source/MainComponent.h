@@ -29,6 +29,10 @@ private:
     juce::TextButton masterStartButton{ "Master Play" };
     juce::TextButton masterStopButton{ "Master Pause" };
     void loadAudioFile(int playernumber);
+    //Task13
+    void saveSession();
+    void loadSession();
+    juce::File session;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainComponent)
 };

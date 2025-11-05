@@ -2,6 +2,11 @@
 
 MainComponent::MainComponent()
 {
+    //Task13
+    session = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+        .getChildFile("AcaBlend / session.xml");
+    loadSession();
+
     addAndMakeVisible(playerGUI1);
     addAndMakeVisible(playerGUI2);
 
@@ -58,7 +63,44 @@ MainComponent::MainComponent()
                 playerGUI1.updatePauseButtonText(false);
             }
             };
+        
+        playerGUI1.onMarkerSelected = [this](double markerTime) {
+            playerAudio1.setPosition(markerTime); };
+        playerGUI1.onAddMarker = [this]{
+                double currtime =  playerAudio1.getCurrentPosition();
+                playerAudio1.addMarker(currtime);
+                juce::String markerName = "Marker at " + playerGUI1.formatTime(currtime);
+                playerGUI1.markerNames.add(markerName);
+                playerGUI1.markerTimes.add(currtime);
+                playerGUI1.markersTable.updateContent();
+            };
+        playerGUI1.onRemoveMarker = [this] { int selectedRow = playerGUI1.markersTable.getSelectedRow();
+        if (selectedRow >= 0)
+        {
+                playerGUI1.markerNames.remove(selectedRow);
+                playerGUI1.markerTimes.remove(selectedRow);
+                playerGUI1.markersTable.updateContent();
+        } };
 
+        playerGUI2.onMarkerSelected = [this](double markerTime) {
+            playerAudio2.setPosition(markerTime); };
+        playerGUI2.onAddMarker = [this] { 
+                   double currtime = playerAudio2.getCurrentPosition();
+                   playerAudio2.addMarker(currtime);
+                   juce::String markerName = "Marker at " + playerGUI1.formatTime(currtime);
+                   playerGUI2.markerNames.add(markerName);
+                   playerGUI2.markerTimes.add(currtime);
+                   playerGUI2.markersTable.updateContent(); };
+        playerGUI2.onRemoveMarker = [this] { int selectedRow = playerGUI1.markersTable.getSelectedRow();
+        if (selectedRow >= 0)
+        {
+                   playerGUI2.markerNames.remove(selectedRow);
+                   playerGUI2.markerTimes.remove(selectedRow);
+                   playerGUI2.markersTable.updateContent();
+        } };
+
+        
+        
             playerGUI2.onLoadButton = [this] { loadAudioFile(2); };
             playerGUI2.onVolumeChanged = [this](double volume) { playerAudio2.setGain((float)volume); };
             playerGUI2.onSpeedChanged = [this](double speed) { playerAudio2.setspeed((float)speed); };
@@ -132,6 +174,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+    saveSession();
     shutdownAudio();
 }
 
@@ -194,8 +237,8 @@ void MainComponent::resized()
 
     // Master button at the top center
     auto masterButtonArea = area.removeFromTop(40).withTrimmedTop(5);
-    masterStartButton.setBounds(50, 550, 100, 30);
-    masterStopButton.setBounds(getWidth()/2+50, 550, 100, 30);
+    masterStartButton.setBounds(360, 550, 100, 30);
+    masterStopButton.setBounds(getWidth()/2+360, 550, 100, 30);
 
 }
 
@@ -238,3 +281,69 @@ void MainComponent::loadAudioFile(int playernumber)
                 playerGUI2.updateTrackList(tracknames, durations);
         });
 }
+//Task13
+void MainComponent::saveSession()
+{
+    auto xml = std::make_unique<juce::XmlElement>("session");
+    //Player1
+    juce::String currentFilePath1 = playerAudio1.getCurrentFilePath();
+    if (currentFilePath1.isNotEmpty())
+    {
+        xml->setAttribute("filepath1", currentFilePath1);
+        xml->setAttribute("position1", playerAudio1.getCurrentPosition());
+        xml->setAttribute("playing1", !playerAudio1.isPaused());
+    }
+    //Player2
+    juce::String currentFilePath2 = playerAudio2.getCurrentFilePath();
+    if (currentFilePath2.isNotEmpty())
+    {
+        xml->setAttribute("filepath2", currentFilePath2);
+        xml->setAttribute("position2", playerAudio2.getCurrentPosition());
+        xml->setAttribute("playing2", !playerAudio2.isPaused());
+    }
+    auto session = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+        .getChildFile("AcaBlend_session.xml");
+    xml->writeTo(session);
+}
+
+void MainComponent::loadSession()
+{
+    auto sessionFile = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory)
+        .getChildFile("AcaBlend_session.xml");
+    if (auto xml = juce::XmlDocument::parse(sessionFile))
+    {
+        juce::String filepath1 = xml->getStringAttribute("filepath1", "");
+        double position = xml->getDoubleAttribute("position");
+        bool wasPlaying = xml->getBoolAttribute("playing");
+
+        juce::File audioFile1(filepath1);
+        if (filepath1.isNotEmpty())
+        {
+            juce::File audioFile1(filepath1);
+            if (audioFile1.existsAsFile())
+            {
+                playerAudio1.LoadFile(audioFile1, true);
+                playerAudio1.setPosition(xml->getDoubleAttribute("position1", 0.0));
+                if (xml->getBoolAttribute("playing1", false))
+                    playerAudio1.start();
+                playerGUI1.updatePauseButtonText(!xml->getBoolAttribute("playing1", false));
+            }
+        }
+        juce::String filepath2 = xml->getStringAttribute("filepath2", "");
+        if (filepath2.isNotEmpty())
+        {
+            juce::File audioFile2(filepath2);
+            if (audioFile2.existsAsFile())
+            {
+                playerAudio2.LoadFile(audioFile2, true);
+                playerAudio2.setPosition(xml->getDoubleAttribute("position2", 0.0));
+                if (xml->getBoolAttribute("playing2", false))
+                    playerAudio2.start();
+                playerGUI2.updatePauseButtonText(!xml->getBoolAttribute("playing2", false));
+            }
+        }
+    }
+}
+
+
+

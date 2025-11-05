@@ -48,10 +48,18 @@ public:
     juce::AudioThumbnail* getAudioThumbnail() { return audioThumbnail.get(); } 
 	bool hasAudioLoaded() const { return readerSource != nullptr; } 
 
+
+    juce::String currentFilePath;
+    juce::String getCurrentFilePath() const { return currentFilePath; }
+
     std::function<void(double pointA, double pointB, bool active)> onABLoopChanged;
 	
+    void addMarker(double time);
+    juce::Array<double> getMarkerTimes() const { return markerTimes; };
 
 private:
+    //Task14
+    juce::Array <double> markerTimes;
     juce::String lastDuration;
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
