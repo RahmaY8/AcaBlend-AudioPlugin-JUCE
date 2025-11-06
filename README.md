@@ -2,6 +2,9 @@
 
 AcaBlend is a dual-track audio player plugin built with JUCE framework.
 
+## How to download
+Just click on AcaBlend.exe :)
+
 ## Features
 
 ### 🎵 Dual Player Architecture
