@@ -156,7 +156,7 @@ MainComponent::MainComponent()
     setAudioChannels(0, 2);
 
     addAndMakeVisible(masterStartButton);
-    masterStartButton.setColour(juce::TextButton::buttonColourId, juce::Colour(109, 93, 255));
+    masterStartButton.setColour(juce::TextButton::buttonColourId, juce::Colour(90, 53, 200));
     masterStartButton.onClick = [this] {
         playerAudio1.start();
         playerAudio2.start();
@@ -165,7 +165,7 @@ MainComponent::MainComponent()
         };
 
     addAndMakeVisible(masterStopButton);
-    masterStopButton.setColour(juce::TextButton::buttonColourId, juce::Colour(109, 93, 255));
+    masterStopButton.setColour(juce::TextButton::buttonColourId, juce::Colour(90, 53, 200));
     masterStopButton.onClick = [this] {
         playerAudio1.stop();
         playerAudio2.stop();
@@ -237,8 +237,8 @@ void MainComponent::resized()
 
     // Master button at the top center
     auto masterButtonArea = area.removeFromTop(40).withTrimmedTop(5);
-    masterStartButton.setBounds(360, 550, 100, 30);
-    masterStopButton.setBounds(getWidth()/2+360, 550, 100, 30);
+    masterStartButton.setBounds(500, 590, 130, 30);
+    masterStopButton.setBounds(getWidth()/2+500, 590, 130, 30);
 
 }
 

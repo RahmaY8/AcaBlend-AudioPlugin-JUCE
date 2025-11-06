@@ -19,7 +19,7 @@ PlayerGUI::PlayerGUI()
 
     addAndMakeVisible(markersTable);
     markersTable.setModel(this);
-    markersTable.getHeader().addColumn("Markers", 4, 200);
+    markersTable.getHeader().addColumn("Markers", 4, 280);
 
     //Labels for metadata 
     addAndMakeVisible(nowPlayingLabel);
@@ -75,6 +75,16 @@ PlayerGUI::PlayerGUI()
     progressLabel.setText("00:00", juce::dontSendNotification);
     addAndMakeVisible(progressLabel);
     startTimer(100);
+    // In PlayerGUI constructor, after creating the tables:
+    tracksLoaded.getVerticalScrollBar().setColour(juce::ScrollBar::thumbColourId, juce::Colour(130, 115, 255));
+    tracksLoaded.getVerticalScrollBar().setColour(juce::ScrollBar::backgroundColourId, juce::Colour(40, 40, 60));
+    markersTable.getVerticalScrollBar().setColour(juce::ScrollBar::thumbColourId, juce::Colour(130, 115, 255));
+    markersTable.getVerticalScrollBar().setColour(juce::ScrollBar::backgroundColourId, juce::Colour(40, 40, 60));
+
+    tracksLoaded.getHorizontalScrollBar().setColour(juce::ScrollBar::thumbColourId, juce::Colour(130, 115, 255));
+    tracksLoaded.getHorizontalScrollBar().setColour(juce::ScrollBar::backgroundColourId, juce::Colour(40, 40, 60));
+    markersTable.getHorizontalScrollBar().setColour(juce::ScrollBar::thumbColourId, juce::Colour(130, 115, 255));
+    markersTable.getHorizontalScrollBar().setColour(juce::ScrollBar::backgroundColourId, juce::Colour(40, 40, 60));
 }
 
 PlayerGUI::~PlayerGUI() 
@@ -137,7 +147,7 @@ void PlayerGUI::paint(juce::Graphics& g)
     }
 
     // Draw metadata table background and boarder
-    int metaX = 360, metaY = 380, metaWidth = 270, metaHeight = 160;
+    int metaX = 50, metaY = 590, metaWidth = 330, metaHeight = 160;
     g.setColour(juce::Colour(40,40,60));
     g.fillRect(metaX, metaY, metaWidth, metaHeight);
     g.setColour(juce::Colour(160,160,175));
@@ -175,10 +185,12 @@ void PlayerGUI::paint(juce::Graphics& g)
 	g.drawRect(getLocalBounds(), 2);
 	progressSlider.setColour(juce::Slider::trackColourId, juce::Colour(130,115,255));
     tracksLoaded.setColour(juce::TableListBox::backgroundColourId, juce::Colour(40,40,60));
+    
     speedSlider.setColour(juce::Slider::trackColourId, juce::Colour(130, 115, 255));
     volumeSlider.setColour(juce::Slider::trackColourId, juce::Colour(130, 115, 255));
     speedSlider.setColour(juce::Slider::thumbColourId, juce::Colour(160,160,175));
     volumeSlider.setColour(juce::Slider::thumbColourId, juce::Colour(160,160,175));
+    markersTable.setColour(juce::TableListBox::backgroundColourId, juce::Colour(40, 40, 60));
    
 }
 
@@ -217,19 +229,19 @@ void PlayerGUI::resized()
    
     int waveformY = x + 180;
 
-    tracksLoaded.setBounds(50, 420, 280, 120); 
+    tracksLoaded.setBounds(50, 420, 280, 150); 
    
-    int metaX = 360, metaY = 380, metaWidth = 310;
+    int metaX = 50, metaY = 590, metaWidth = 310;
 
     titleLabel.setBounds(metaX + 10, metaY + 40, metaWidth - 20, 25);
     artistLabel.setBounds(metaX + 10, metaY + 80, metaWidth - 20, 25);
     formatLabel.setBounds(metaX + 10, metaY + 120, metaWidth - 20, 25);
-
+  
     //Task 14
     // Marker controls
-    addMarkerButton.setBounds(50, 550, 100, 30);
-    removeMarkerButton.setBounds(160, 550, 100, 30);
-    markersTable.setBounds(50, 590, 280, 100);
+    addMarkerButton.setBounds(350, 380, 100, 30);
+    removeMarkerButton.setBounds(460, 380, 100, 30);
+    markersTable.setBounds(350, 420, 280, 150);
 }
 
 void PlayerGUI::buttonClicked(juce::Button* button)
