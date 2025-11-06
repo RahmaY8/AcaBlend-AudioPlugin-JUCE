@@ -79,7 +79,12 @@ AcaBlend automatically saves your session to:
 
 
 ## License
-//////////////////////////
+
+AcaBlend is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for full details.
+
+### Third-Party Licenses
+This project uses:
+- JUCE Framework ([JUCE License](https://juce.com/legal/))
 ---
 
 **AcaBlend** - Blend your audio with precision and style!
