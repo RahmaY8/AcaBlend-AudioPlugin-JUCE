@@ -87,4 +87,4 @@ This project uses:
 - JUCE Framework ([JUCE License](https://juce.com/legal/))
 ---
 
-**AcaBlend** - Blend your audio with precision and style!
+**AcaBlend** - Blend your ACAPELLA audio with precision and style!
