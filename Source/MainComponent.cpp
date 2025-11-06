@@ -91,7 +91,7 @@ MainComponent::MainComponent()
                    playerGUI2.markerNames.add(markerName);
                    playerGUI2.markerTimes.add(currtime);
                    playerGUI2.markersTable.updateContent(); };
-        playerGUI2.onRemoveMarker = [this] { int selectedRow = playerGUI1.markersTable.getSelectedRow();
+        playerGUI2.onRemoveMarker = [this] { int selectedRow = playerGUI2.markersTable.getSelectedRow();
         if (selectedRow >= 0)
         {
                    playerGUI2.markerNames.remove(selectedRow);
